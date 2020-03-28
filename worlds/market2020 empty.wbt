@@ -1,0 +1,375 @@
+#VRML_SIM R2020a utf8
+WorldInfo {
+  basicTimeStep 16
+}
+Viewpoint {
+  orientation 0.07340627277394964 0.9617103873043144 0.2640542559180256 3.88989398471528
+  position -4.951773940367832 4.6355945620569425 -4.49956765875373
+}
+Background {
+  skyColor [
+    1 1 1
+  ]
+}
+DirectionalLight {
+  direction 0 -1 0
+  intensity 2.3
+}
+Floor {
+  size 3 3
+}
+CerealBox {
+  translation 0.205702 0.001053800028815166 0.488709
+  rotation -3.5539484078197423e-12 1 -2.6359730574908707e-11 1.0150300000602365e-06
+  name "cereal box(8)"
+}
+CerealBox {
+  translation 0.341315 0.001053800028815166 -0.42544252829774987
+  rotation 0.9999881929525688 -0.0048213698415216525 0.0006069170513607486 -4.1891703403475754e-14
+  name "cereal box(17)"
+  textureUrl [
+    "textures/cereal_box_1.jpg"
+  ]
+}
+CerealBox {
+  translation 0.12197299999999915 0.001053800028815166 -0.4375951823952913
+  rotation 0.9999999128244915 0.0004112108755284978 7.250258614924198e-05 -3.964597635178183e-13
+  name "cereal box(16)"
+  textureUrl [
+    "textures/cereal_box_1.jpg"
+  ]
+}
+JamJar {
+  translation -0.5403875768007922 0.0007009502020478495 -0.48284767267616446
+  rotation -1.137369392531999e-09 1 7.497719657174292e-10 0.2595992203272888
+  name "jam jar(2)"
+}
+Floor {
+  name "floor(6)"
+  size 3 3
+}
+Floor {
+  name "floor(7)"
+  size 3 3
+}
+BiscuitBox {
+  translation 0.528204 0.001171520011825647 0.250415
+  rotation 0.15687926519497292 -0.9863872013251653 0.04928676509767285 -1.247581883050046e-16
+  name "biscuit box(7)"
+  size 0.14 0.18 0.08
+}
+Floor {
+  name "floor(5)"
+  size 3 3
+}
+Youbot {
+  hidden position_0_0 1.0262140710468048e-07
+  hidden position_0_1 9.583907878324073e-08
+  hidden position_0_2 -9.898354846882285e-08
+  hidden position_0_3 -9.947698931256355e-08
+  hidden position_1_0 -9.825091367559642e-07
+  hidden rotation_2 0 0 -1 9.825731230875673e-07
+  hidden position_2_0 1.5700026364867663
+  hidden rotation_3 0 -0.9999999999999999 0 1.5700026364867663
+  hidden position_3_0 -2.6350014739008096
+  hidden rotation_4 0 0.9999999999999999 0 2.6350014739008096
+  hidden position_4_0 1.7800004236570337
+  hidden rotation_5 0 -1 0 1.7800004236570337
+  hidden position_5_0 9.23465370386543e-08
+  hidden rotation_6 0 0 1 9.424321830774485e-08
+  hidden position_6_0 1.2970792320114344e-12
+  hidden position_6_1 -1.2958221715587458e-12
+  hidden rotation_9 0 1 0 1.032382731180714e-07
+  hidden rotation_10 0 1 0 9.424321830774485e-08
+  hidden rotation_11 0 -1 0 9.884312124119402e-08
+  hidden rotation_12 0 -1 0 9.884312124119402e-08
+  translation 1.1841132048458585 0.1045673844699006 0.8811769448459152
+  rotation -0.5697829723886562 -0.5810311391254439 -0.5811627824822724 2.10559047402793
+}
+JamJar {
+  translation -0.537365 0.0007009500074381392 -0.306752
+  rotation -3.5213292336965053e-15 1 2.0448623941289403e-16 -0.022898807654114943
+}
+HoneyJar {
+  translation -0.12652601601298658 0.0007009500074381392 -0.548441968625619
+  rotation -1.1792422705589997e-15 1 -1.147114120802504e-16 -0.25834757461516855
+  name "honey jar(1)"
+}
+Floor {
+  name "floor(3)"
+  size 4 4
+}
+HoneyJar {
+  translation -0.35861801601298654 0.0007009500074381392 -0.504291968625619
+  rotation -1.2148855051103986e-15 1 -2.7835851601132503e-16 -0.25834757461516866
+  name "honey jar(2)"
+}
+DEF soda Can {
+  translation -0.32923487541822855 0.062315665674304466 0.419879274066058
+  rotation 7.913527667510631e-08 -0.9999999999999575 2.804631833207171e-07 1.7057904843291386e-06
+  name "can(1)"
+}
+BeerBottle {
+  translation -0.18487700000000004 0.0017107599999994783 0.56
+  rotation -0.5823559731474037 0.14262926658833436 0.8003239424458164 -2.519664079437813e-16
+  name "beer bottle(1)"
+}
+WaterBottle {
+  translation -0.5434470332000026 -0.0008480997674437663 0.11255531402940822
+  rotation 1.9377864194236335e-10 0.9999999999999999 6.349409925060917e-11 -1.8315955963995814
+  name "water bottle(1)"
+}
+Floor {
+  name "floor(4)"
+  size 3 3
+}
+BiscuitBox {
+  translation 0.515276 0.001171520011825647 -0.18622
+  rotation -0.22532735612263413 0.9731785257795098 -0.04638037887300491 1.3257605199472e-16
+  name "biscuit box(6)"
+  size 0.14 0.18 0.08
+}
+CerealBox {
+  translation 0.429713 0.001053800028815166 0.516677
+  rotation 6.784818768435882e-12 1 1.699222688574972e-11 1.0150300000621049e-06
+  name "cereal box(18)"
+}
+WaterBottle {
+  translation -0.5320610332000026 -0.0008480997674437663 0.2488673140294084
+  rotation 1.9377863520330995e-10 0.9999999999999999 6.349410445438056e-11 -1.8315955963995814
+  name "water bottle(7)"
+}
+Floor {
+  name "floor(2)"
+  size 3 3
+}
+BeerBottle {
+  translation -0.16750699999999996 0.0017107599999994783 0.422651
+  rotation -0.1287674174881828 0.012827932019595215 -0.9915918496808678 -2.0843470299792876e-16
+}
+Floor {
+  name "floor(1)"
+  size 3 3
+}
+DEF bear Can {
+  translation -0.507233 0.06231566500522322 0.392722
+  rotation 1.9222521078304474e-10 1 1.1355276481055271e-10 -7.239265401191742e-07
+  name "can(5)"
+  textureUrl [
+    "textures/can_beer_base_color.jpg"
+  ]
+}
+DEF beer Can {
+  translation -0.500452 0.0623156650052232 0.532921
+  rotation -3.335250062911457e-14 1 7.225825486025244e-15 0.010186318133006715
+  name "can(2)"
+  textureUrl [
+    "textures/can_beer_base_color.jpg"
+  ]
+}
+DEF SHELF1 Cabinet {
+  translation -2.00631 0.00999986 -0.00808912
+  rotation 6.64575e-11 1 -1.9239e-08 1.56423
+  name "cabinet(4)"
+  depth 0.3
+  innerThickness 0.001
+  outerThickness 0.001
+  rowsHeights [
+    0.2, 0.4
+  ]
+  columnsWidths [
+    0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25
+  ]
+  layout [
+    "Shelf(1,2,8, 0)"
+    "Shelf( 1, 1, 0, 1)"
+    "Shelf(2, 1, 0, 1)"
+    "Shelf( 3, 1, 0, 1)"
+    "Shelf( 4, 1, 0, 1)"
+    "Shelf( 5, 1, 0, 1)"
+    "Shelf( 6, 1, 0, 1)"
+    "Shelf( 7, 1, 0, 1)"
+    "Shelf( 1, 2, 0, 1)"
+    "Shelf( 2, 2, 0, 1)"
+    "Shelf( 3, 2, 0, 1)"
+    "Shelf(4, 2, 0, 1)"
+    "Shelf(5, 2, 0, 1)"
+    "Shelf(6, 2, 0, 1)"
+    "Shelf(7, 2, 0, 1)"
+  ]
+  primaryAppearance PaintedWood {
+    colorOverride 0.43529411764705883 0.3058823529411765 0.27450980392156865
+  }
+}
+DEF SHELF2 Cabinet {
+  translation 1.99373 0.00999986 -0.18975
+  rotation -1.91133e-08 -1 -6.60232e-11 1.57736
+  name "cabinet(2)"
+  depth 0.3
+  innerThickness 0.001
+  outerThickness 0.001
+  rowsHeights [
+    0.2, 0.4
+  ]
+  columnsWidths [
+    0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25
+  ]
+  layout [
+    "Shelf(1,2,8, 0)"
+    "Shelf( 1, 1, 0, 1)"
+    "Shelf(2, 1, 0, 1)"
+    "Shelf( 3, 1, 0, 1)"
+    "Shelf( 4, 1, 0, 1)"
+    "Shelf( 5, 1, 0, 1)"
+    "Shelf( 6, 1, 0, 1)"
+    "Shelf( 7, 1, 0, 1)"
+    "Shelf( 1, 2, 0, 1)"
+    "Shelf( 2, 2, 0, 1)"
+    "Shelf( 3, 2, 0, 1)"
+    "Shelf(4, 2, 0, 1)"
+    "Shelf(5, 2, 0, 1)"
+    "Shelf(6, 2, 0, 1)"
+    "Shelf(7, 2, 0, 1)"
+  ]
+  primaryAppearance PaintedWood {
+    colorOverride 0.43529411764705883 0.3058823529411765 0.27450980392156865
+  }
+}
+DEF SHELF3 Cabinet {
+  translation -0.011952 0.01 -2.0091
+  rotation 0 -1 0 2.63055e-06
+  name "cabinet(3)"
+  depth 0.3
+  innerThickness 0.001
+  outerThickness 0.001
+  rowsHeights [
+    0.4, 0.2
+  ]
+  columnsWidths [
+    0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25
+  ]
+  layout [
+    "Shelf(1,2,8, 0)"
+    "Shelf( 1, 1, 0, 1)"
+    "Shelf(2, 1, 0, 1)"
+    "Shelf( 3, 1, 0, 1)"
+    "Shelf( 4, 1, 0, 1)"
+    "Shelf( 5, 1, 0, 1)"
+    "Shelf( 6, 1, 0, 1)"
+    "Shelf( 7, 1, 0, 1)"
+    "Shelf( 1, 2, 0, 1)"
+    "Shelf( 2, 2, 0, 1)"
+    "Shelf( 3, 2, 0, 1)"
+    "Shelf(4, 2, 0, 1)"
+    "Shelf(5, 2, 0, 1)"
+    "Shelf(6, 2, 0, 1)"
+    "Shelf(7, 2, 0, 1)"
+  ]
+  primaryAppearance PaintedWood {
+    colorOverride 0.43529411764705883 0.3058823529411765 0.27450980392156865
+  }
+}
+DEF SHELF4 Cabinet {
+  translation 0.000310603 0.01 2.00944
+  rotation -9.58636e-09 -1 -1.22918e-14 -3.1415853071795863
+  name "cabinet(1)"
+  depth 0.3
+  innerThickness 0.001
+  outerThickness 0.001
+  rowsHeights [
+    0.4, 0.4
+  ]
+  columnsWidths [
+    0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25
+  ]
+  layout [
+    "Shelf(1,2,8, 0)"
+    "Shelf( 1, 1, 0, 1)"
+    "Shelf(2, 1, 0, 1)"
+    "Shelf( 3, 1, 0, 1)"
+    "Shelf( 4, 1, 0, 1)"
+    "Shelf( 5, 1, 0, 1)"
+    "Shelf( 6, 1, 0, 1)"
+    "Shelf( 7, 1, 0, 1)"
+    "Shelf( 1, 2, 0, 1)"
+    "Shelf( 2, 2, 0, 1)"
+    "Shelf( 3, 2, 0, 1)"
+    "Shelf(4, 2, 0, 1)"
+    "Shelf(5, 2, 0, 1)"
+    "Shelf(6, 2, 0, 1)"
+    "Shelf(7, 2, 0, 1)"
+  ]
+  primaryAppearance PaintedWood {
+    colorOverride 0.43529411764705883 0.3058823529411765 0.27450980392156865
+  }
+}
+DEF REPOSITORY Solid {
+  translation -0.00197906 0.001 -0.00408673
+  scale 5 5 5
+  children [
+    DEF repository Shape {
+      appearance PBRAppearance {
+        baseColor 0.792156862745098 0.6431372549019608 0.5686274509803921
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.25 0.0001 0.25
+      }
+    }
+  ]
+  name "solid(1)"
+  boundingObject USE repository
+}
+DEF soda Can {
+  translation -0.3425928754182285 0.06231566567430446 0.5496532740660579
+  rotation 7.913295485188019e-08 -0.9999999999999576 2.8046192255094294e-07 1.7057904843259197e-06
+  name "can(11)"
+}
+DEF R1 Solid {
+  translation -0.328584 0.035 -0.022816
+  scale 4 4 4
+  children [
+    DEF r1 Shape {
+      appearance PBRAppearance {
+        baseColor 0.41568627450980394 0.28627450980392155 0.2549019607843137
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.15625 0.05 0.005
+      }
+    }
+  ]
+  name "solid(2)"
+  boundingObject USE r1
+}
+DEF R2 Solid {
+  translation -0.00070234 0.035 0.279833
+  rotation 0 1 0 1.5707996938995747
+  scale 4.2 4.2 4.2
+  children [
+    USE r1
+  ]
+  name "solid(4)"
+  boundingObject USE r1
+}
+DEF R3 Solid {
+  translation 0.31182 0.035 -0.00701387
+  scale 4 4 4
+  children [
+    USE r1
+  ]
+  name "solid(3)"
+  boundingObject USE r1
+}
+DEF R4 Solid {
+  translation -0.00852162 0.035 -0.312751
+  rotation 0 1 0 1.5707996938995747
+  scale 4 4 4
+  children [
+    USE r1
+  ]
+  name "solid(5)"
+  boundingObject USE r1
+}
