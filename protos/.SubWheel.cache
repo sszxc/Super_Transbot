@@ -1,0 +1,11 @@
+Webots Proto Cache File version 1.4
+protoFileHash: a793b1f82bc12f00af84e1ec32291835
+containsDevices: 0
+baseType: HingeJoint
+slotType: 
+parameters: name
+tags: hidden
+license:  Copyright Cyberbotics Ltd. Licensed for use only with Webots.
+licenseUrl:  https://cyberbotics.com/webots_assets_license
+documentationUrl: 
+info: subwheel\sof\sthe\somnidirectionnal\swheel\n

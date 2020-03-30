@@ -1,0 +1,11 @@
+Webots Proto Cache File version 1.4
+protoFileHash: 9211630c20b6fdf8184955e09f73235b
+containsDevices: 1
+baseType: Robot
+slotType: 
+parameters: translation,rotation,name,controller,controllerArgs,customData,supervisor,synchronization,bodySlot
+tags: 
+license:  Copyright Cyberbotics Ltd. Licensed for use only with Webots.
+licenseUrl:  https://cyberbotics.com/webots_assets_license
+documentationUrl: https://www.cyberbotics.com/doc/guide/youbot
+info: The\sKUKA\syouBot\sis\sa\spowerful,\seducational\srobot\sthat\sis\sespecially\sdesigned\sfor\sresearch\sand\seducation\sin\smobile\smanipulation,\swhich\scounts\sas\sa\skey\stechnology\sfor\sprofessional\sservice\srobotics.\sIt\sconsists\sof\san\somnidirectional\splatform,\sa\sfive\sdegree-of-freedom\srobot\sarm\sand\sa\stwo-finger\sgripper.\n

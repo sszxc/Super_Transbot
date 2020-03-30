@@ -3,8 +3,8 @@ WorldInfo {
   basicTimeStep 16
 }
 Viewpoint {
-  orientation 0.13455136232015977 -0.9559440112770624 -0.26089648943845345 3.8472489224000435
-  position 3.7466473875676503 3.920203683512355 -4.451038944603251
+  orientation 0.45969840521505023 -0.8865075883458785 0.052741559020509095 5.861296398603237
+  position 3.4989135614834965 0.757106736673884 2.6660034690971504
 }
 Background {
   skyColor [
@@ -16,7 +16,7 @@ DirectionalLight {
   intensity 2.3
 }
 Floor {
-  size 3 3
+  size 30 30
 }
 BeerBottle {
   translation -0.1592899998927489 0.01146076200017189 1.2991900000000005
@@ -611,4 +611,132 @@ DEF R4 Solid {
   ]
   name "solid(5)"
   boundingObject USE r1
+}
+Robot {
+  translation 2 0.11 -3.26272e-07
+  rotation 1 0 0 -1.5707953071795862
+  children [
+    BodyMesh {
+    }
+    Group {
+    }
+    DEF WHEEL1 InteriorWheel {
+      translation 0.228 -0.158 -0.055
+      anchor 0.228 -0.158 -0.055
+      name "wheel1"
+      sensorName "wheel1sensor"
+    }
+    DEF WHEEL2 ExteriorWheel {
+      translation 0.228 0.158 -0.055
+      anchor 0.228 0.158 -0.055
+      name "wheel2"
+      sensorName "wheel2sensor"
+    }
+    DEF WHEEL3 ExteriorWheel {
+      translation -0.228 -0.158 -0.055
+      anchor -0.228 -0.158 -0.055
+      name "wheel3"
+      sensorName "wheel3sensor"
+    }
+    DEF WHEEL4 InteriorWheel {
+      translation -0.228 0.158 -0.055
+      anchor -0.228 0.158 -0.055
+      name "wheel4"
+      sensorName "wheel4sensor"
+    }
+    DEF PLATE Solid {
+      translation -0.155 0 0
+      children [
+        PlateMesh {
+        }
+      ]
+      name "plate"
+      boundingObject Group {
+        children [
+          Transform {
+            translation 0.008 0 0.045
+            children [
+              Box {
+                size 0.25 0.17 0.007
+              }
+            ]
+          }
+          Transform {
+            translation -0.015 0.112 0.045
+            rotation 0 0 1 -0.13
+            children [
+              Box {
+                size 0.17 0.08 0.007
+              }
+            ]
+          }
+          Transform {
+            translation -0.015 -0.112 0.045
+            rotation 0 0 1 0.13
+            children [
+              Box {
+                size 0.17 0.08 0.007
+              }
+            ]
+          }
+          Transform {
+            translation 0.076 0.084 0.045
+            rotation 0 0 1 0.81
+            children [
+              Box {
+                size 0.08 0.08 0.007
+              }
+            ]
+          }
+          Transform {
+            translation 0.076 -0.084 0.045
+            rotation 0 0 1 -0.81
+            children [
+              Box {
+                size 0.08 0.08 0.007
+              }
+            ]
+          }
+        ]
+      }
+      physics Physics {
+        density -1
+        mass 0.5
+      }
+    }
+  ]
+  model "KUKA youBot"
+  description "KUKA youBot"
+  boundingObject Group {
+    children [
+      Transform {
+        translation 0 0 -0.045
+        children [
+          Box {
+            size 0.34 0.34 0.09
+          }
+        ]
+      }
+      Transform {
+        translation 0 0 -0.045
+        children [
+          Box {
+            size 0.56 0.23 0.09
+          }
+        ]
+      }
+    ]
+  }
+  physics Physics {
+    density -1
+    mass 22
+    centerOfMass [
+      0 0 -0.045
+    ]
+    inertiaMatrix [
+      0.166204 0.418086 0.55459
+      0 0 0
+    ]
+  }
+  controller "youbot"
 }
