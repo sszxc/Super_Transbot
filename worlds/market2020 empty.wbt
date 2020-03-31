@@ -1,6 +1,36 @@
 #VRML_SIM R2020a utf8
 WorldInfo {
+  info [
+    "Simulation of the KUKA youBot robot."
+    "This model includes an accurate and fast simulation of the Meccanum wheels."
+    "The robot can be equiped with various sensors (including the Microsoft Kinect) and configured with zero, one or two arms."
+  ]
+  title "KUKA youBot"
   basicTimeStep 16
+  contactProperties [
+    ContactProperties {
+      material1 "InteriorWheelMat"
+      coulombFriction [
+        1.8, 0, 0.2
+      ]
+      frictionRotation -0.9648 0
+      bounce 0
+      forceDependentSlip [
+        10, 0
+      ]
+    }
+    ContactProperties {
+      material1 "ExteriorWheelMat"
+      coulombFriction [
+        1.8, 0, 0.2
+      ]
+      frictionRotation 0.9648 0
+      bounce 0
+      forceDependentSlip [
+        10, 0
+      ]
+    }
+  ]
 }
 Viewpoint {
   orientation 0.07340627277394964 0.9617103873043144 0.2640542559180256 3.88989398471528
@@ -16,7 +46,7 @@ DirectionalLight {
   intensity 2.3
 }
 Floor {
-  size 3 3
+  size 30 30
 }
 CerealBox {
   translation 0.205702 0.001053800028815166 0.488709
@@ -61,30 +91,6 @@ BiscuitBox {
 Floor {
   name "floor(5)"
   size 3 3
-}
-Youbot {
-  hidden position_0_0 1.0262140710468048e-07
-  hidden position_0_1 9.583907878324073e-08
-  hidden position_0_2 -9.898354846882285e-08
-  hidden position_0_3 -9.947698931256355e-08
-  hidden position_1_0 -9.825091367559642e-07
-  hidden rotation_2 0 0 -1 9.825731230875673e-07
-  hidden position_2_0 1.5700026364867663
-  hidden rotation_3 0 -0.9999999999999999 0 1.5700026364867663
-  hidden position_3_0 -2.6350014739008096
-  hidden rotation_4 0 0.9999999999999999 0 2.6350014739008096
-  hidden position_4_0 1.7800004236570337
-  hidden rotation_5 0 -1 0 1.7800004236570337
-  hidden position_5_0 9.23465370386543e-08
-  hidden rotation_6 0 0 1 9.424321830774485e-08
-  hidden position_6_0 1.2970792320114344e-12
-  hidden position_6_1 -1.2958221715587458e-12
-  hidden rotation_9 0 1 0 1.032382731180714e-07
-  hidden rotation_10 0 1 0 9.424321830774485e-08
-  hidden rotation_11 0 -1 0 9.884312124119402e-08
-  hidden rotation_12 0 -1 0 9.884312124119402e-08
-  translation 1.1841132048458585 0.1045673844699006 0.8811769448459152
-  rotation -0.5697829723886562 -0.5810311391254439 -0.5811627824822724 2.10559047402793
 }
 JamJar {
   translation -0.537365 0.0007009500074381392 -0.306752
@@ -372,4 +378,132 @@ DEF R4 Solid {
   ]
   name "solid(5)"
   boundingObject USE r1
+}
+DEF SEU_SuperBot Robot {
+  translation 3.65 0.11 -3.26272e-07
+  rotation 1 0 0 -1.5707953071795862
+  children [
+    BodyMesh {
+    }
+    Group {
+    }
+    DEF WHEEL1 InteriorWheel {
+      translation 0.228 -0.158 -0.055
+      anchor 0.228 -0.158 -0.055
+      name "wheel1"
+      sensorName "wheel1sensor"
+    }
+    DEF WHEEL2 ExteriorWheel {
+      translation 0.228 0.158 -0.055
+      anchor 0.228 0.158 -0.055
+      name "wheel2"
+      sensorName "wheel2sensor"
+    }
+    DEF WHEEL3 ExteriorWheel {
+      translation -0.228 -0.158 -0.055
+      anchor -0.228 -0.158 -0.055
+      name "wheel3"
+      sensorName "wheel3sensor"
+    }
+    DEF WHEEL4 InteriorWheel {
+      translation -0.228 0.158 -0.055
+      anchor -0.228 0.158 -0.055
+      name "wheel4"
+      sensorName "wheel4sensor"
+    }
+    DEF PLATE Solid {
+      translation -0.155 0 0
+      children [
+        PlateMesh {
+        }
+      ]
+      name "plate"
+      boundingObject Group {
+        children [
+          Transform {
+            translation 0.008 0 0.045
+            children [
+              Box {
+                size 0.25 0.17 0.007
+              }
+            ]
+          }
+          Transform {
+            translation -0.015 0.112 0.045
+            rotation 0 0 1 -0.13
+            children [
+              Box {
+                size 0.17 0.08 0.007
+              }
+            ]
+          }
+          Transform {
+            translation -0.015 -0.112 0.045
+            rotation 0 0 1 0.13
+            children [
+              Box {
+                size 0.17 0.08 0.007
+              }
+            ]
+          }
+          Transform {
+            translation 0.076 0.084 0.045
+            rotation 0 0 1 0.81
+            children [
+              Box {
+                size 0.08 0.08 0.007
+              }
+            ]
+          }
+          Transform {
+            translation 0.076 -0.084 0.045
+            rotation 0 0 1 -0.81
+            children [
+              Box {
+                size 0.08 0.08 0.007
+              }
+            ]
+          }
+        ]
+      }
+      physics Physics {
+        density -1
+        mass 0.5
+      }
+    }
+  ]
+  model "KUKA youBot"
+  description "KUKA youBot"
+  boundingObject Group {
+    children [
+      Transform {
+        translation 0 0 -0.045
+        children [
+          Box {
+            size 0.34 0.34 0.09
+          }
+        ]
+      }
+      Transform {
+        translation 0 0 -0.045
+        children [
+          Box {
+            size 0.56 0.23 0.09
+          }
+        ]
+      }
+    ]
+  }
+  physics Physics {
+    density -1
+    mass 22
+    centerOfMass [
+      0 0 -0.045
+    ]
+    inertiaMatrix [
+      0.166204 0.418086 0.55459
+      0 0 0
+    ]
+  }
+  controller "youbot"
 }
