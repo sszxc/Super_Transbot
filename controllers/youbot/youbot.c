@@ -22,6 +22,8 @@
 
 #include <webots/keyboard.h>
 #include <webots/robot.h>
+#include <webots/camera.h>
+#include <webots/camera_recognition_object.h>
 
 #include <arm.h>
 #include <base.h>
@@ -101,6 +103,7 @@ static void display_helper_message() {
 }
 
 int main(int argc, char **argv) {
+  WbDeviceTag camera; //相机初始化
   wb_robot_init();
 
   base_init();
@@ -110,6 +113,10 @@ int main(int argc, char **argv) {
 
   if (argc > 1 && strcmp(argv[1], "demo") == 0)
     automatic_behavior();
+
+  camera = wb_robot_get_device("camera"); //相机初始化
+  wb_camera_enable(camera, TIME_STEP);
+  wb_camera_recognition_enable(camera, TIME_STEP);
 
   display_helper_message();
 
@@ -189,6 +196,31 @@ int main(int argc, char **argv) {
       }
     }
     pc = c;
+
+    int i, j;
+    /* Get current number of object recognized */
+    int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
+    printf("\nRecognized %d objects.\n", number_of_objects);
+
+    /* Get and display all the objects information */
+    const WbCameraRecognitionObject *objects = wb_camera_recognition_get_objects(camera);
+    for (i = 0; i < number_of_objects; ++i)
+    {
+      printf("Model of object %d: %s\n", i, objects[i].model);
+      printf("Id of object %d: %d\n", i, objects[i].id);
+      printf("Relative position of object %d: %lf %lf %lf\n", i, objects[i].position[0], objects[i].position[1],
+             objects[i].position[2]);
+      printf("Relative orientation of object %d: %lf %lf %lf %lf\n", i, objects[i].orientation[0], objects[i].orientation[1],
+             objects[i].orientation[2], objects[i].orientation[3]);
+      printf("Size of object %d: %lf %lf\n", i, objects[i].size[0], objects[i].size[1]);
+      printf("Position of the object %d on the camera image: %d %d\n", i, objects[i].position_on_image[0],
+             objects[i].position_on_image[1]);
+      printf("Size of the object %d on the camera image: %d %d\n", i, objects[i].size_on_image[0], objects[i].size_on_image[1]);
+      for (j = 0; j < objects[i].number_of_colors; ++j)
+        printf("- Color %d/%d: %lf %lf %lf\n", j + 1, objects[i].number_of_colors, objects[i].colors[3 * j],
+               objects[i].colors[3 * j + 1], objects[i].colors[3 * j + 2]);
+    }
+
   }
 
   wb_robot_cleanup();
