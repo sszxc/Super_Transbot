@@ -6,7 +6,6 @@ WorldInfo {
     "The robot can be equiped with various sensors (including the Microsoft Kinect) and configured with zero, one or two arms."
   ]
   title "KUKA youBot"
-  basicTimeStep 16
   contactProperties [
     ContactProperties {
       material1 "InteriorWheelMat"
@@ -33,8 +32,10 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.0029027118010471397 -0.9669502030790451 0.254948777266323 6.056087210538517
-  position 1.335313747612501 0.08369780130602224 2.2332452698941525
+  orientation 0.9818405328742322 -0.18268797178967325 -0.05112996155503058 5.1479824169959985
+  position 0.7795482100100836 3.3413291872005924 1.730779255756376
+  follow "SuperBot"
+  followType "None"
 }
 Background {
   skyColor [
@@ -49,38 +50,12 @@ Floor {
   size 30 30
 }
 CerealBox {
-  hidden linearVelocity_0 -6.893998898169762e-17 -9.379164111999418e-16 -4.384257277867422e-17
-  hidden angularVelocity_0 -3.279427068525328e-16 -5.612964550210033e-17 3.59325178255226e-16
-  translation 0.205702 0.0010538000000000491 0.488709
-  rotation 9.692649590348177e-13 1 -1.8517163121217107e-11 1.0150300000596904e-06
-  name "cereal box(8)"
-}
-CerealBox {
-  hidden linearVelocity_0 -3.160554819733502e-17 -9.379164111956756e-16 -1.7464192145478337e-18
-  hidden angularVelocity_0 1.2297855042001745e-16 1.550062989286447e-17 2.2112325801662837e-16
-  translation 0.341315 0.0010538000000000491 -0.42544252829774987
-  rotation 0.9999893079943114 -0.004614474987913893 0.0003008615030573759 -4.1878538839677405e-14
-  name "cereal box(17)"
-  textureUrl [
-    "textures/cereal_box_1.jpg"
-  ]
-}
-CerealBox {
-  hidden linearVelocity_0 5.967422730451849e-17 -9.379164111692803e-16 2.6775129774009038e-17
-  hidden angularVelocity_0 1.6397140056002296e-16 -1.8153973098150598e-17 -3.593252942770181e-16
-  translation 0.12197299999999914 0.0010538000000000491 -0.4375951823952913
-  rotation 0.999999905787898 0.0004125641410453598 0.0001349630491516545 -3.964800987631299e-13
+  translation 0.421059 0.00105381 0.425159
+  rotation 0.001035665659265868 0.8093276631083232 -0.587356502581067 0.00013284447097876715
   name "cereal box(16)"
   textureUrl [
     "textures/cereal_box_1.jpg"
   ]
-}
-JamJar {
-  hidden linearVelocity_0 5.141404749680135e-16 -7.446487870920388e-15 5.503059938555865e-16
-  hidden angularVelocity_0 9.47428664037206e-15 7.704344844044173e-17 -9.180911644450436e-15
-  translation -0.5403875768009189 0.0007009500000004776 -0.4828476726763112
-  rotation -1.36603744977722e-15 1 1.753577982126524e-15 0.2595992203272888
-  name "jam jar(2)"
 }
 Floor {
   name "floor(6)"
@@ -90,122 +65,25 @@ Floor {
   name "floor(7)"
   size 3 3
 }
-BiscuitBox {
-  hidden linearVelocity_0 -1.0173735970840485e-17 -2.4868995751096754e-16 1.2561032375736328e-17
-  hidden angularVelocity_0 1.7168397288017824e-16 1.3965424321084494e-17 1.281026566875183e-16
-  translation 0.528204 0.001171520000000023 0.250415
-  rotation 0.16996844363192 -0.9849549089130623 -0.031217872723875346 -1.3131211887049833e-16
-  name "biscuit box(7)"
-  size 0.14 0.18 0.08
-}
 Floor {
   name "floor(5)"
   size 3 3
-}
-JamJar {
-  hidden linearVelocity_0 3.298518889670868e-17 -2.5579538487089204e-16 2.5340662082983375e-18
-  hidden angularVelocity_0 -4.0986212696654537e-17 5.840118756686215e-17 -6.902941085752268e-16
-  translation -0.537365 0.0007009500000000127 -0.306752
-  rotation -5.2502764344498165e-15 1 -1.898140326116398e-15 -0.02289880765411494
-}
-HoneyJar {
-  hidden linearVelocity_0 -1.82640367916885e-18 -2.557953848899062e-16 -1.514824588737036e-17
-  hidden angularVelocity_0 -2.07088232572566e-16 6.888574155855625e-17 8.504906634414034e-31
-  translation -0.12652601601298658 0.0007009500000000127 -0.548441968625619
-  rotation -1.9600002523574344e-17 1 8.48225883974044e-17 -0.25834757461516855
-  name "honey jar(1)"
 }
 Floor {
   name "floor(3)"
   size 4 4
 }
-HoneyJar {
-  hidden linearVelocity_0 1.6155870821156234e-20 -2.2737367544920335e-16 4.5818217316466375e-18
-  hidden angularVelocity_0 -8.628676357190278e-17 2.130766249842993e-18 1.3805882171504453e-16
-  translation -0.35861801601298654 0.0007009500000000127 -0.504291968625619
-  rotation -1.1557485616590391e-16 1 -1.9110853549804474e-17 -0.2583475746151687
-  name "honey jar(2)"
-}
-DEF soda Can {
-  hidden linearVelocity_0 -1.8360443975306114e-18 -2.5031405519917054e-14 -3.66072814643522e-18
-  hidden angularVelocity_0 1.8766246687561563e-18 -1.1121380567202061e-16 -5.299427955905469e-17
-  translation -0.32923487541819946 0.0623156650000016 0.41987927406604986
-  rotation 2.1813646664025366e-10 -1 5.291638907675739e-11 1.7057904843301146e-06
-  name "can(1)"
-}
-BeerBottle {
-  hidden linearVelocity_0 9.986361411194237e-18 3.01980662698043e-16 -2.0486772474994856e-17
-  hidden angularVelocity_0 -1.3115982755701288e-16 -1.4229676558130267e-17 -1.0473757737334337e-16
-  translation -0.18487700000000004 0.0017107599999999779 0.56
-  rotation -0.4214295686046553 0.12204635970648403 0.898611041990966 -4.307871458091541e-16
-  name "beer bottle(1)"
-}
-WaterBottle {
-  hidden linearVelocity_0 -1.0687498556285209e-15 -8.3275608635358e-15 -1.64271338086862e-17
-  hidden angularVelocity_0 -8.144194707227177e-17 -1.860383342233549e-17 7.460082361370756e-15
-  translation -0.5434470331993625 -0.0008480999999994909 0.11255531402918298
-  rotation 6.8552654964114e-17 0.9999999999999999 -1.154067006812592e-16 -1.8315955963995816
-  name "water bottle(1)"
-}
 Floor {
   name "floor(4)"
   size 3 3
-}
-BiscuitBox {
-  hidden linearVelocity_0 1.1826155796381857e-17 -2.6645352588558627e-16 -3.1206585410607985e-17
-  hidden angularVelocity_0 -2.575259593202683e-16 1.5996129349885524e-17 -1.2810265668751795e-16
-  translation 0.515276 0.001171520000000023 -0.18622
-  rotation -0.1979007774496009 0.9728950059451347 -0.11962687696274639 1.37069030575044e-16
-  name "biscuit box(6)"
-  size 0.14 0.18 0.08
-}
-CerealBox {
-  hidden linearVelocity_0 -1.619656093048153e-17 -9.663381206243252e-16 4.3588029514351743e-17
-  hidden angularVelocity_0 2.869499944882807e-16 1.7505462287913535e-17 1.6584254503141445e-16
-  translation 0.429713 0.0010538000000000491 0.516677
-  rotation 2.3585336974009558e-11 1 -4.35677661356756e-13 1.0150300000620524e-06
-  name "cereal box(18)"
-}
-WaterBottle {
-  hidden linearVelocity_0 -1.0351647001942803e-15 -8.270717444627396e-15 4.2075786121322315e-16
-  hidden angularVelocity_0 2.8993333193468286e-15 -5.893105136475331e-17 7.17910764355895e-15
-  translation -0.5320610331993625 -0.0008480999999994909 0.24886731402918325
-  rotation 7.015277425500917e-17 0.9999999999999999 -1.008967726452363e-16 -1.8315955963995816
-  name "water bottle(7)"
 }
 Floor {
   name "floor(2)"
   size 3 3
 }
-BeerBottle {
-  hidden linearVelocity_0 -3.7603732090689366e-17 3.019806626980419e-16 -1.8815461485006274e-18
-  hidden angularVelocity_0 -8.51168965665825e-17 4.78589281799219e-17 3.491252579111458e-16
-  translation -0.16750699999999996 0.0017107599999999779 0.422651
-  rotation -0.32849336409638946 0.06044368916152389 -0.9425702468172767 -3.7869396460755415e-16
-}
 Floor {
   name "floor(1)"
   size 3 3
-}
-DEF bear Can {
-  hidden linearVelocity_0 4.2676295020696295e-18 -2.0301221021653385e-16 4.520506664726055e-18
-  hidden angularVelocity_0 1.4530079335553907e-16 -7.582463277900489e-17 -5.299427955951971e-17
-  translation -0.507233 0.06231566500000002 0.392722
-  rotation 1.4045448069886576e-10 0.9999999999999999 1.4049183578116084e-10 -7.239265401324262e-07
-  name "can(5)"
-  textureUrl [
-    "textures/can_beer_base_color.jpg"
-  ]
-}
-DEF beer Can {
-  hidden linearVelocity_0 2.019332698155906e-17 -1.0150610511148767e-16 1.0351006862767128e-17
-  hidden angularVelocity_0 1.912762277851435e-16 -1.1077091648543557e-16 -3.1796567735712073e-16
-  translation -0.500452 0.062315665 0.532921
-  rotation -3.38701088966838e-14 1 -3.764672412914406e-15 0.010186318133006713
-  name "can(2)"
-  textureUrl [
-    "textures/can_beer_base_color.jpg"
-  ]
 }
 DEF SHELF1 Cabinet {
   translation -2.00631 0.00999986 -0.00808912
@@ -361,13 +239,6 @@ DEF REPOSITORY Solid {
   name "solid(1)"
   boundingObject USE repository
 }
-DEF soda Can {
-  hidden linearVelocity_0 -4.0744184351120554e-17 -2.5112610402718285e-14 8.260687226057977e-18
-  hidden angularVelocity_0 -9.075389647290264e-17 -1.457068720751286e-16 7.949141933929349e-16
-  translation -0.34259287541819944 0.06231566500000161 0.5496532740660498
-  rotation 1.9287220165702729e-10 -1 4.668487270048027e-11 1.705790484316116e-06
-  name "can(11)"
-}
 DEF R1 Solid {
   translation -0.328584 0.035 -0.022816
   scale 4 4 4
@@ -416,8 +287,8 @@ DEF R4 Solid {
   boundingObject USE r1
 }
 DEF Youbo Robot {
-  translation 3.0359627210736173 0.10461535143719454 0.428145816809813
-  rotation -0.011561089793016774 0.7070594227732779 0.7070596253996665 3.1184315788164882
+  translation 3.0359627207526323 0.10461535939446809 0.4281458168065429
+  rotation -0.011561089757252545 0.7070594227640966 0.7070596254094326 3.1184315787448975
   children [
     DEF Tailsolid Solid {
       translation -0.293 -0.00557028 0.0141442
@@ -456,13 +327,13 @@ DEF Youbo Robot {
       sensorName "wheel1sensor"
     }
     DEF WHEEL2 ExteriorWheel {
-      translation 0.228000000857771 0.1579999999999937 -0.054956474765557956
+      translation 0.22800000085777417 0.1579999999999937 -0.054956474765557956
       anchor 0.228 0.158 -0.055
       name "wheel2"
       sensorName "wheel2sensor"
     }
     DEF WHEEL3 ExteriorWheel {
-      translation -0.22799999911780686 -0.1579999999999936 -0.05495523523445917
+      translation -0.22799999911780364 -0.1579999999999936 -0.05495523523445917
       anchor -0.228 -0.158 -0.055
       name "wheel3"
       sensorName "wheel3sensor"
@@ -568,13 +439,97 @@ DEF Youbo Robot {
     ]
   }
   controller ""
-  linearVelocity 1.0841582183457263e-10 1.2539916548039332e-07 2.7639114126842176e-11
-  angularVelocity 4.4350336262867116e-10 8.833667713643563e-13 -1.4979672970824049e-09
 }
 DEF SEU_SuperBot Robot {
-  translation 0.9909068779762253 0.06466743288586863 0.16198222185322814
-  rotation -6.653525690714512e-07 0.7071067889653639 0.7071067734074181 3.1415913228755428
+  translation 0.4255514982459281 0.064667441 0.8561253943767216
+  rotation -0.5676270751506715 0.5821509699192701 0.5821509699192701 2.1090412971174803
   children [
+    DEF Gripper Solid {
+      translation 0.21 0 0
+      children [
+        DEF Up_DownJoint SliderJoint {
+          jointParameters JointParameters {
+            position 0.05
+          }
+          device [
+            LinearMotor {
+              name "linear motorMain"
+            }
+          ]
+          endPoint Solid {
+            rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
+            children [
+              DEF Left_Gripper SliderJoint {
+                jointParameters JointParameters {
+                }
+                device [
+                  LinearMotor {
+                    name "linear motorL"
+                  }
+                ]
+                endPoint Solid {
+                  translation 0 0.055 -0.10499999999999982
+                  rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
+                  children [
+                    DEF Left_GripperShape Shape {
+                      appearance PBRAppearance {
+                        baseColor 0 0 0
+                        roughness 1
+                        metalness 0
+                      }
+                      geometry Box {
+                        size 0.01 0.05 0.1
+                      }
+                    }
+                  ]
+                  name "solid(1)"
+                  boundingObject USE Left_GripperShape
+                }
+              }
+              DEF Right_Gripper SliderJoint {
+                jointParameters JointParameters {
+                  axis 0 0 -1
+                }
+                device [
+                  LinearMotor {
+                    name "linear motorR"
+                  }
+                ]
+                endPoint Solid {
+                  translation 0 0.055 0.10499999999999998
+                  rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
+                  children [
+                    DEF Right_GripperShape Shape {
+                      appearance PBRAppearance {
+                        roughness 1
+                        metalness 0
+                      }
+                      geometry Box {
+                        size 0.01 0.05 0.1
+                      }
+                    }
+                  ]
+                  name "solid(2)"
+                  boundingObject USE Right_GripperShape
+                }
+              }
+              DEF Up_DownShape Shape {
+                appearance PBRAppearance {
+                  baseColor 0.215686 0.215686 0.215686
+                  roughness 1
+                  metalness 0
+                }
+                geometry Box {
+                  size 0.05 0.01 0.25
+                }
+              }
+            ]
+            boundingObject USE Up_DownShape
+          }
+        }
+      ]
+      name "solid(2)"
+    }
     DEF Body Shape {
       appearance PBRAppearance {
         baseColor 0.521569 0.521569 0.521569
@@ -592,28 +547,28 @@ DEF SEU_SuperBot Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 0 -1 0 5.16191365590357e-08
+      rotation 0 0.9999999999999999 0 4.147935154787621
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
     }
     DEF WHEEL2 ExteriorWheel {
       translation 0.133 0.163 -0.015
-      rotation 0 -0.9999999999999999 0 5.16191365590357e-08
+      rotation 0 1 0 0.16111201154057064
       anchor 0.133 0.163 -0.015
       name "wheel2"
       sensorName "wheel2sensor"
     }
     DEF WHEEL3 ExteriorWheel {
       translation -0.133 -0.163 -0.015
-      rotation 0 0.9999999999999999 0 5.16191365590357e-08
+      rotation 0 1 0 0.14635310549905423
       anchor -0.133 -0.163 -0.015
       name "wheel3"
       sensorName "wheel3sensor"
     }
     DEF WHEEL4 InteriorWheel {
       translation -0.133 0.163 -0.015
-      rotation 0 1 0 5.16191365590357e-08
+      rotation 0 1 0 4.16279769266191
       anchor -0.133 0.163 -0.015
       name "wheel4"
       sensorName "wheel4sensor"
@@ -631,134 +586,4 @@ DEF SEU_SuperBot Robot {
     ]
   }
   controller "SuperBot_Controlller"
-  linearVelocity -6.632859029609621e-12 1.27851560606397e-07 2.193296942908713e-08
-  angularVelocity 3.458110144512516e-07 -1.3940497164270621e-12 1.0178043542705873e-10
-}
-DEF SEU_SuperBot Robot {
-  translation 3.65 0.11 -3.26272e-07
-  rotation 1 0 0 -1.5707953071795862
-  children [
-    BodyMesh {
-    }
-    Group {
-    }
-    DEF WHEEL1 InteriorWheel {
-      translation 0.228 -0.158 -0.055
-      anchor 0.228 -0.158 -0.055
-      name "wheel1"
-      sensorName "wheel1sensor"
-    }
-    DEF WHEEL2 ExteriorWheel {
-      translation 0.228 0.158 -0.055
-      anchor 0.228 0.158 -0.055
-      name "wheel2"
-      sensorName "wheel2sensor"
-    }
-    DEF WHEEL3 ExteriorWheel {
-      translation -0.228 -0.158 -0.055
-      anchor -0.228 -0.158 -0.055
-      name "wheel3"
-      sensorName "wheel3sensor"
-    }
-    DEF WHEEL4 InteriorWheel {
-      translation -0.228 0.158 -0.055
-      anchor -0.228 0.158 -0.055
-      name "wheel4"
-      sensorName "wheel4sensor"
-    }
-    DEF PLATE Solid {
-      translation -0.155 0 0
-      children [
-        PlateMesh {
-        }
-      ]
-      name "plate"
-      boundingObject Group {
-        children [
-          Transform {
-            translation 0.008 0 0.045
-            children [
-              Box {
-                size 0.25 0.17 0.007
-              }
-            ]
-          }
-          Transform {
-            translation -0.015 0.112 0.045
-            rotation 0 0 1 -0.13
-            children [
-              Box {
-                size 0.17 0.08 0.007
-              }
-            ]
-          }
-          Transform {
-            translation -0.015 -0.112 0.045
-            rotation 0 0 1 0.13
-            children [
-              Box {
-                size 0.17 0.08 0.007
-              }
-            ]
-          }
-          Transform {
-            translation 0.076 0.084 0.045
-            rotation 0 0 1 0.81
-            children [
-              Box {
-                size 0.08 0.08 0.007
-              }
-            ]
-          }
-          Transform {
-            translation 0.076 -0.084 0.045
-            rotation 0 0 1 -0.81
-            children [
-              Box {
-                size 0.08 0.08 0.007
-              }
-            ]
-          }
-        ]
-      }
-      physics Physics {
-        density -1
-        mass 0.5
-      }
-    }
-  ]
-  model "KUKA youBot"
-  description "KUKA youBot"
-  boundingObject Group {
-    children [
-      Transform {
-        translation 0 0 -0.045
-        children [
-          Box {
-            size 0.34 0.34 0.09
-          }
-        ]
-      }
-      Transform {
-        translation 0 0 -0.045
-        children [
-          Box {
-            size 0.56 0.23 0.09
-          }
-        ]
-      }
-    ]
-  }
-  physics Physics {
-    density -1
-    mass 22
-    centerOfMass [
-      0 0 -0.045
-    ]
-    inertiaMatrix [
-      0.166204 0.418086 0.55459
-      0 0 0
-    ]
-  }
-  controller "youbot"
 }
