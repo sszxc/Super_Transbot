@@ -22,6 +22,7 @@
 
 #include <webots/keyboard.h>
 #include <webots/robot.h>
+#include <webots/gps.h>
 #include <webots/camera.h>
 #include <webots/camera_recognition_object.h>
 
@@ -103,7 +104,6 @@ static void display_helper_message() {
 }
 
 int main(int argc, char **argv) {
-  WbDeviceTag camera; //相机初始化
   wb_robot_init();
 
   base_init();
@@ -114,9 +114,11 @@ int main(int argc, char **argv) {
   if (argc > 1 && strcmp(argv[1], "demo") == 0)
     automatic_behavior();
 
-  camera = wb_robot_get_device("camera"); //相机初始化
+  WbDeviceTag camera = wb_robot_get_device("camera"); //相机初始化
   wb_camera_enable(camera, TIME_STEP);
   wb_camera_recognition_enable(camera, TIME_STEP);
+  WbDeviceTag gps = wb_robot_get_device("gps");//GPS初始化
+  wb_gps_enable(gps, TIME_STEP);
 
   display_helper_message();
 
@@ -197,6 +199,8 @@ int main(int argc, char **argv) {
     }
     pc = c;
 
+
+    //摄像头识别
     int i, j;
     /* Get current number of object recognized */
     int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
@@ -221,6 +225,10 @@ int main(int argc, char **argv) {
                objects[i].colors[3 * j + 1], objects[i].colors[3 * j + 2]);
     }
 
+    //GPS数据返回
+    //控制器 crash
+    const double *gps_values = wb_gps_get_values(gps);
+    // printf("Using the GPS device: %.3f %.3f %.3f\n", gps_values[0], gps_values[1], gps_values[2]);
   }
 
   wb_robot_cleanup();
