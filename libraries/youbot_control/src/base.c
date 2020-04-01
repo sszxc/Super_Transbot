@@ -30,7 +30,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#define SPEED 14
+#define SPEED 10
 #define DISTANCE_TOLERANCE 0.001
 #define ANGLE_TOLERANCE 0.001
 

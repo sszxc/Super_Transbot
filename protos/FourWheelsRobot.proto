@@ -3,8 +3,8 @@ field SFVec3f    translation  0.109991 0.04 -0.0613162
   field SFRotation rotation     0 1 0 0
   field SFFloat    mass     1
 ]
-  {
-    DEF FourCar Robot{
+{
+DEF FourCar Robot{
   translation IS translation
   rotation IS rotation
   children [
