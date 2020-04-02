@@ -6,7 +6,20 @@ WorldInfo {
     "The robot can be equiped with various sensors (including the Microsoft Kinect) and configured with zero, one or two arms."
   ]
   title "KUKA youBot"
+  basicTimeStep 16
   contactProperties [
+    ContactProperties {
+      material1 "GripperL"
+      coulombFriction [
+        -1
+      ]
+    }
+    ContactProperties {
+      material1 "GripperR"
+      coulombFriction [
+        -1
+      ]
+    }
     ContactProperties {
       material1 "InteriorWheelMat"
       coulombFriction [
@@ -32,8 +45,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.9818405328742322 -0.18268797178967325 -0.05112996155503058 5.1479824169959985
-  position 0.7795482100100836 3.3413291872005924 1.730779255756376
+  orientation 0.23090015044365897 0.9538265792252517 0.19209366800743335 5.247714092245385
+  position -2.0720160506610625 1.1012952554889601 5.399527980375313
   follow "SuperBot"
   followType "None"
 }
@@ -50,8 +63,10 @@ Floor {
   size 30 30
 }
 CerealBox {
-  translation 0.421059 0.00105381 0.425159
-  rotation 0.001035665659265868 0.8093276631083232 -0.587356502581067 0.00013284447097876715
+  hidden linearVelocity_0 -5.88902496468948e-17 5.975489989256959e-16 -8.857014489408043e-18
+  hidden angularVelocity_0 -7.678997279914601e-17 -6.683608456196129e-19 3.903783152344783e-16
+  translation 0.5673270000000006 -2.4525000000052977e-05 3.5523800000000003
+  rotation 8.768612389281131e-17 1 1.404518743095053e-16 0.05225852809674779
   name "cereal box(16)"
   textureUrl [
     "textures/cereal_box_1.jpg"
@@ -287,8 +302,8 @@ DEF R4 Solid {
   boundingObject USE r1
 }
 DEF Youbo Robot {
-  translation 3.0359627207526323 0.10461535939446809 0.4281458168065429
-  rotation -0.011561089757252545 0.7070594227640966 0.7070596254094326 3.1184315787448975
+  translation 3.0359627207519 0.10461535939446812 0.42814581681188607
+  rotation -0.011561089757254103 0.7070594227641016 0.7070596254094277 3.1184315787449024
   children [
     DEF Tailsolid Solid {
       translation -0.293 -0.00557028 0.0141442
@@ -321,25 +336,25 @@ DEF Youbo Robot {
     Group {
     }
     DEF WHEEL1 InteriorWheel {
-      translation 0.22800000085778088 -0.15799999999999356 -0.05495647476555789
+      translation 0.22800000085779185 -0.15799999999999356 -0.05495647476555789
       anchor 0.228 -0.158 -0.055
       name "wheel1"
       sensorName "wheel1sensor"
     }
     DEF WHEEL2 ExteriorWheel {
-      translation 0.22800000085777417 0.1579999999999937 -0.054956474765557956
+      translation 0.22800000085778513 0.1579999999999937 -0.054956474765557956
       anchor 0.228 0.158 -0.055
       name "wheel2"
       sensorName "wheel2sensor"
     }
     DEF WHEEL3 ExteriorWheel {
-      translation -0.22799999911780364 -0.1579999999999936 -0.05495523523445917
+      translation -0.22799999911781813 -0.1579999999999936 -0.05495523523445917
       anchor -0.228 -0.158 -0.055
       name "wheel3"
       sensorName "wheel3sensor"
     }
     DEF WHEEL4 InteriorWheel {
-      translation -0.22799999911780602 0.1579999999999936 -0.05495523523445914
+      translation -0.2279999991178205 0.1579999999999936 -0.05495523523445914
       anchor -0.228 0.158 -0.055
       name "wheel4"
       sensorName "wheel4sensor"
@@ -439,17 +454,19 @@ DEF Youbo Robot {
     ]
   }
   controller ""
+  linearVelocity 1.7721018724503114e-11 2.600520167254775e-15 5.828341526091549e-13
+  angularVelocity -2.3224707430647902e-14 1.80108102721331e-15 6.958081616835264e-13
 }
 DEF SEU_SuperBot Robot {
-  translation 0.4255514982459281 0.064667441 0.8561253943767216
-  rotation -0.5676270751506715 0.5821509699192701 0.5821509699192701 2.1090412971174803
+  translation 0.542276 0.06466744099999999 4.34796
+  rotation -0.5633156863306497 0.5842411477865236 0.5842411477865236 2.1155749025935027
   children [
     DEF Gripper Solid {
       translation 0.21 0 0
       children [
         DEF Up_DownJoint SliderJoint {
           jointParameters JointParameters {
-            position 0.05
+            position 0.04999999932944775
           }
           device [
             LinearMotor {
@@ -457,10 +474,12 @@ DEF SEU_SuperBot Robot {
             }
           ]
           endPoint Solid {
+            translation 0 0 -6.705522526129215e-10
             rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
             children [
               DEF Left_Gripper SliderJoint {
                 jointParameters JointParameters {
+                  position 0.06000000000238152
                 }
                 device [
                   LinearMotor {
@@ -468,7 +487,7 @@ DEF SEU_SuperBot Robot {
                   }
                 ]
                 endPoint Solid {
-                  translation 0 0.055 -0.10499999999999982
+                  translation 0 0.055 -0.04499999999761829
                   rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
                   children [
                     DEF Left_GripperShape Shape {
@@ -478,16 +497,18 @@ DEF SEU_SuperBot Robot {
                         metalness 0
                       }
                       geometry Box {
-                        size 0.01 0.05 0.1
+                        size 0.02 0.05 0.1
                       }
                     }
                   ]
                   name "solid(1)"
+                  contactMaterial "GripperL"
                   boundingObject USE Left_GripperShape
                 }
               }
               DEF Right_Gripper SliderJoint {
                 jointParameters JointParameters {
+                  position 0.059999999997618514
                   axis 0 0 -1
                 }
                 device [
@@ -496,7 +517,7 @@ DEF SEU_SuperBot Robot {
                   }
                 ]
                 endPoint Solid {
-                  translation 0 0.055 0.10499999999999998
+                  translation 0 0.055 0.04500000000238147
                   rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
                   children [
                     DEF Right_GripperShape Shape {
@@ -505,11 +526,12 @@ DEF SEU_SuperBot Robot {
                         metalness 0
                       }
                       geometry Box {
-                        size 0.01 0.05 0.1
+                        size 0.02 0.05 0.1
                       }
                     }
                   ]
                   name "solid(2)"
+                  contactMaterial "GripperR"
                   boundingObject USE Right_GripperShape
                 }
               }
@@ -529,6 +551,7 @@ DEF SEU_SuperBot Robot {
         }
       ]
       name "solid(2)"
+      contactMaterial ""
     }
     DEF Body Shape {
       appearance PBRAppearance {
@@ -547,28 +570,28 @@ DEF SEU_SuperBot Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 0 0.9999999999999999 0 4.147935154787621
+      rotation 0 0.9999999999999999 -5.564400156955045e-17 3.003362244515542
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
     }
     DEF WHEEL2 ExteriorWheel {
       translation 0.133 0.163 -0.015
-      rotation 0 1 0 0.16111201154057064
+      rotation 8.560929001094243e-16 1 7.782662728267493e-16 1.5882963432307022
       anchor 0.133 0.163 -0.015
       name "wheel2"
       sensorName "wheel2sensor"
     }
     DEF WHEEL3 ExteriorWheel {
       translation -0.133 -0.163 -0.015
-      rotation 0 1 0 0.14635310549905423
+      rotation 3.135881239563034e-16 1 3.919851549453793e-16 1.5735430101482786
       anchor -0.133 -0.163 -0.015
       name "wheel3"
       sensorName "wheel3sensor"
     }
     DEF WHEEL4 InteriorWheel {
       translation -0.133 0.163 -0.015
-      rotation 0 1 0 4.16279769266191
+      rotation 0 1 7.227697601781485e-16 3.029999417195456
       anchor -0.133 0.163 -0.015
       name "wheel4"
       sensorName "wheel4sensor"
@@ -586,4 +609,6 @@ DEF SEU_SuperBot Robot {
     ]
   }
   controller "SuperBot_Controlller"
+  linearVelocity -1.8987577034539726e-16 -4.3407701675526126e-16 -8.918082634588972e-16
+  angularVelocity -8.350682438887792e-16 9.481233363026976e-16 -7.748011994490716e-16
 }
