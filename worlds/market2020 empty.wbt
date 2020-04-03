@@ -17,7 +17,7 @@ WorldInfo {
     ContactProperties {
       material1 "GripperR"
       coulombFriction [
-        -1
+        500
       ]
     }
     ContactProperties {
@@ -45,10 +45,10 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.23090015044365897 0.9538265792252517 0.19209366800743335 5.247714092245385
-  position -2.0720160506610625 1.1012952554889601 5.399527980375313
-  follow "SuperBot"
-  followType "None"
+  orientation -0.2589603555951831 -0.9075055987127895 -0.3307160754105518 1.719181862109928
+  position -0.7199189189823767 1.1469179129019955 4.107285600359506
+  follow "SuperBot(1)"
+  followType "Mounted Shot"
 }
 Background {
   skyColor [
@@ -63,14 +63,24 @@ Floor {
   size 30 30
 }
 CerealBox {
-  hidden linearVelocity_0 -5.88902496468948e-17 5.975489989256959e-16 -8.857014489408043e-18
-  hidden angularVelocity_0 -7.678997279914601e-17 -6.683608456196129e-19 3.903783152344783e-16
-  translation 0.5673270000000006 -2.4525000000052977e-05 3.5523800000000003
-  rotation 8.768612389281131e-17 1 1.404518743095053e-16 0.05225852809674779
+  translation 1.02769 0.0099755 3.87807
+  rotation -1.1373899151659374e-05 0.9999999254133916 0.0003860619712049448 0.0129854
   name "cereal box(16)"
   textureUrl [
     "textures/cereal_box_1.jpg"
   ]
+}
+BiscuitBox {
+  translation 1.80935 0.001421 3.22472
+  rotation 1.92322e-08 1 -2.50203e-11 -1.5707953071795862
+  name "biscuit box(5)"
+  size 0.14 0.18 0.08
+  mass 0.5
+}
+WaterBottle {
+  translation -0.13380299999999998 0.008901899419979875 -1.28656
+  rotation -2.888080518698505e-16 1 -4.594122899653438e-16 -0.261795307179586
+  name "water bottle(2)"
 }
 Floor {
   name "floor(6)"
@@ -203,7 +213,7 @@ DEF SHELF3 Cabinet {
   }
 }
 DEF SHELF4 Cabinet {
-  translation 0.000310603 0.01 2.00944
+  translation 0.191076 0.01 3.17048
   rotation -9.58636e-09 -1 -1.22918e-14 -3.1415853071795863
   name "cabinet(1)"
   depth 0.3
@@ -302,8 +312,8 @@ DEF R4 Solid {
   boundingObject USE r1
 }
 DEF Youbo Robot {
-  translation 3.0359627207519 0.10461535939446812 0.42814581681188607
-  rotation -0.011561089757254103 0.7070594227641016 0.7070596254094277 3.1184315787449024
+  translation 3.035962720751979 0.10461535939446806 0.42814581681368
+  rotation -0.01156108975725433 0.7070594227641015 0.7070596254094278 3.118431578744902
   children [
     DEF Tailsolid Solid {
       translation -0.293 -0.00557028 0.0141442
@@ -336,25 +346,25 @@ DEF Youbo Robot {
     Group {
     }
     DEF WHEEL1 InteriorWheel {
-      translation 0.22800000085779185 -0.15799999999999356 -0.05495647476555789
+      translation 0.22800000085776656 -0.15799999999999356 -0.05495647476555789
       anchor 0.228 -0.158 -0.055
       name "wheel1"
       sensorName "wheel1sensor"
     }
     DEF WHEEL2 ExteriorWheel {
-      translation 0.22800000085778513 0.1579999999999937 -0.054956474765557956
+      translation 0.22800000085775984 0.1579999999999937 -0.054956474765557956
       anchor 0.228 0.158 -0.055
       name "wheel2"
       sensorName "wheel2sensor"
     }
     DEF WHEEL3 ExteriorWheel {
-      translation -0.22799999911781813 -0.1579999999999936 -0.05495523523445917
+      translation -0.22799999911784388 -0.1579999999999936 -0.05495523523445917
       anchor -0.228 -0.158 -0.055
       name "wheel3"
       sensorName "wheel3sensor"
     }
     DEF WHEEL4 InteriorWheel {
-      translation -0.2279999991178205 0.1579999999999936 -0.05495523523445914
+      translation -0.22799999911784627 0.1579999999999936 -0.05495523523445914
       anchor -0.228 0.158 -0.055
       name "wheel4"
       sensorName "wheel4sensor"
@@ -454,13 +464,26 @@ DEF Youbo Robot {
     ]
   }
   controller ""
-  linearVelocity 1.7721018724503114e-11 2.600520167254775e-15 5.828341526091549e-13
-  angularVelocity -2.3224707430647902e-14 1.80108102721331e-15 6.958081616835264e-13
 }
 DEF SEU_SuperBot Robot {
-  translation 0.542276 0.06466744099999999 4.34796
-  rotation -0.5633156863306497 0.5842411477865236 0.5842411477865236 2.1155749025935027
+  translation 0.561813 0.0646674 4.40922
+  rotation -0.5633156863306495 0.5842411477865237 0.5842411477865236 2.1155749025935027
   children [
+    DEF BodyBase Shape {
+      appearance PBRAppearance {
+        baseColor 0.521569 0.521569 0.521569
+        baseColorMap ImageTexture {
+          url [
+            "textures/texture_grid.png"
+          ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.4 0.25 0.035
+      }
+    }
     DEF Gripper Solid {
       translation 0.21 0 0
       children [
@@ -474,20 +497,21 @@ DEF SEU_SuperBot Robot {
             }
           ]
           endPoint Solid {
-            translation 0 0 -6.705522526129215e-10
+            translation 0 0 -6.705522664907093e-10
             rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
             children [
               DEF Left_Gripper SliderJoint {
                 jointParameters JointParameters {
-                  position 0.06000000000238152
                 }
                 device [
                   LinearMotor {
                     name "linear motorL"
+                    maxPosition 0.2
+                    maxForce 1
                   }
                 ]
                 endPoint Solid {
-                  translation 0 0.055 -0.04499999999761829
+                  translation 0 0.055 -0.10499999999999982
                   rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
                   children [
                     DEF Left_GripperShape Shape {
@@ -508,16 +532,16 @@ DEF SEU_SuperBot Robot {
               }
               DEF Right_Gripper SliderJoint {
                 jointParameters JointParameters {
-                  position 0.059999999997618514
                   axis 0 0 -1
                 }
                 device [
                   LinearMotor {
                     name "linear motorR"
+                    maxForce 1
                   }
                 ]
                 endPoint Solid {
-                  translation 0 0.055 0.04500000000238147
+                  translation 0 0.055 0.10499999999999998
                   rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
                   children [
                     DEF Right_GripperShape Shape {
@@ -553,6 +577,650 @@ DEF SEU_SuperBot Robot {
       name "solid(2)"
       contactMaterial ""
     }
+    DEF WHEEL1 InteriorWheel {
+      translation 0.133 -0.163 -0.015
+      rotation 5.564400156955028e-17 1 3.8950801098685317e-16 3.0033622445155412
+      anchor 0.133 -0.163 -0.015
+      name "wheel1"
+      sensorName "wheel1sensor"
+    }
+    DEF WHEEL2 ExteriorWheel {
+      translation 0.133 0.163 -0.015
+      rotation -2.3347988184802216e-16 0.9999999999999999 -2.3347988184802285e-16 1.588296343230722
+      anchor 0.133 0.163 -0.015
+      name "wheel2"
+      sensorName "wheel2sensor"
+    }
+    DEF WHEEL3 ExteriorWheel {
+      translation -0.133 -0.163 -0.015
+      rotation -2.3519109296722884e-16 1 -3.135881239563047e-16 1.5735430101482688
+      anchor -0.133 -0.163 -0.015
+      name "wheel3"
+      sensorName "wheel3sensor"
+    }
+    DEF WHEEL4 InteriorWheel {
+      translation -0.133 0.163 -0.015
+      rotation 0 1 0 3.0299994171954414
+      anchor -0.133 0.163 -0.015
+      name "wheel4"
+      sensorName "wheel4sensor"
+    }
+  ]
+  name "SuperBot"
+  boundingObject Box {
+    size 0.4 0.25 0.035
+  }
+  physics Physics {
+    density -1
+    mass 22
+    centerOfMass [
+      0 0 0
+    ]
+  }
+  controller ""
+}
+DEF SEU_SuperBot_1_1 Robot {
+  translation 1.03232 0.0646674 4.39375
+  rotation -0.5708721963595179 0.5805621996925308 0.5805621996925308 2.10414
+  children [
+    DEF Body Group {
+      children [
+        Transform {
+          children [
+            DEF BodyBase Shape {
+              appearance PBRAppearance {
+                baseColor 0.521569 0.521569 0.521569
+                baseColorMap ImageTexture {
+                  url [
+                    "textures/stone.jpg"
+                  ]
+                }
+                roughness 1
+                metalness 0
+              }
+              geometry Box {
+                size 0.4 0.25 0.035
+              }
+            }
+          ]
+        }
+        Transform {
+          translation -0.03 0 0.08
+          children [
+            DEF BodyMiddle Shape {
+              appearance PBRAppearance {
+                baseColor 0.117647 0.117647 0.117647
+                roughness 1
+                metalness 0
+              }
+              geometry Box {
+                size 0.33 0.25 0.135
+              }
+            }
+          ]
+        }
+        Transform {
+          translation -0.08 0 0.215
+          children [
+            DEF BodyTop Shape {
+              appearance PBRAppearance {
+                baseColor 0.870588 0.870588 0.870588
+                roughness 1
+                metalness 0
+              }
+              geometry Box {
+                size 0.2 0.25 0.135
+              }
+            }
+          ]
+        }
+        Transform {
+          translation -0.075 0 0.285
+          children [
+            DEF BodyRoof Shape {
+              appearance PBRAppearance {
+                baseColor 0.117647 0.117647 0.117647
+                roughness 1
+                metalness 0
+              }
+              geometry Box {
+                size 0.224 0.25 0.007
+              }
+            }
+          ]
+        }
+      ]
+    }
+    DEF GRIPPER_BASE Solid {
+      translation 0.15 -1.19235e-07 0.08
+      rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 2.09439
+      children [
+        DEF LIFT_SLIDER SliderJoint {
+          jointParameters JointParameters {
+            axis 0 -1 0
+          }
+          device [
+            LinearMotor {
+              name "lift motor"
+              minPosition -0.05
+              maxPosition 0.45
+              maxForce 1000
+            }
+          ]
+          endPoint DEF LIFT Solid {
+            translation 0 0 -0.0425
+            children [
+              DEF LEFT_FINGER_SLIDER SliderJoint {
+                jointParameters JointParameters {
+                  axis -1 0 0
+                }
+                device [
+                  LinearMotor {
+                    name "left finger motor"
+                    maxPosition 0.1
+                  }
+                ]
+                endPoint DEF LEFT_FINGER Solid {
+                  translation -0.022 0 -0.02
+                  children [
+                    Group {
+                      children [
+                        Transform {
+                          translation 0 0.0015 -0.003
+                          children [
+                            Shape {
+                              appearance DEF METAL_APPEARANCE PBRAppearance {
+                                baseColorMap ImageTexture {
+                                  url [
+                                    "textures/metal.jpg"
+                                  ]
+                                }
+                                roughness 0.2
+                              }
+                              geometry Box {
+                                size 0.018 0.031 0.036
+                              }
+                            }
+                          ]
+                        }
+                        DEF LEFT_FINGER_TRANSFORM Transform {
+                          translation 0.0015 0.003 -0.099
+                          children [
+                            Shape {
+                              appearance DEF BLACK_APPEARANCE PBRAppearance {
+                                baseColor 0.0705882 0.0705882 0.0705882
+                                roughness 0.4
+                                metalness 0
+                              }
+                              geometry Box {
+                                size 0.015 0.035 0.155
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                  name "left finger"
+                  boundingObject USE LEFT_FINGER_TRANSFORM
+                  physics DEF LEFT_FINGER_PHYSICS Physics {
+                    density 2000
+                  }
+                }
+              }
+              DEF RIGHT_FINGER_SLIDER SliderJoint {
+                jointParameters JointParameters {
+                  axis 1 0 0
+                }
+                device [
+                  LinearMotor {
+                    name "right finger motor"
+                    maxPosition 0.1
+                  }
+                ]
+                endPoint DEF RIGHT_FINGER Solid {
+                  translation 0.022 0 -0.02
+                  children [
+                    Group {
+                      children [
+                        Transform {
+                          translation 0 0.0015 -0.003
+                          children [
+                            Shape {
+                              appearance USE METAL_APPEARANCE
+                              geometry Box {
+                                size 0.018 0.031 0.036
+                              }
+                            }
+                          ]
+                        }
+                        DEF RIGHT_FINGER_TRANSFORM Transform {
+                          translation -0.0015 0.003 -0.099
+                          children [
+                            Shape {
+                              appearance USE BLACK_APPEARANCE
+                              geometry Box {
+                                size 0.015 0.035 0.155
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                  name "right finger"
+                  boundingObject USE RIGHT_FINGER_TRANSFORM
+                  physics USE LEFT_FINGER_PHYSICS
+                }
+              }
+              Transform {
+                translation 0 -0.126 0.135
+                children [
+                  Group {
+                    children [
+                      Transform {
+                        translation 0 0.1478 -0.154
+                        children [
+                          DEF UPPER_BOX Shape {
+                            appearance USE BLACK_APPEARANCE
+                            geometry Box {
+                              size 0.315 0.01 0.043419
+                            }
+                          }
+                        ]
+                      }
+                      Transform {
+                        translation 0 0.1072 -0.154
+                        children [
+                          USE UPPER_BOX
+                        ]
+                      }
+                      Transform {
+                        translation -0.155 0.1275 -0.154
+                        children [
+                          DEF LEFT_BOX Shape {
+                            appearance USE BLACK_APPEARANCE
+                            geometry Box {
+                              size 0.007 0.05 0.042227
+                            }
+                          }
+                        ]
+                      }
+                      Transform {
+                        translation 0.155 0.1275 -0.154
+                        children [
+                          USE LEFT_BOX
+                        ]
+                      }
+                      Transform {
+                        translation 0 0.126 -0.158
+                        children [
+                          DEF CENTER_BOX Shape {
+                            appearance USE BLACK_APPEARANCE
+                            geometry Box {
+                              size 0.027 0.0541 0.005
+                            }
+                          }
+                        ]
+                      }
+                      Transform {
+                        translation 0 0.132 -0.154
+                        rotation 0 0 1 1.5708
+                        children [
+                          DEF UPPER_CYLINDER Shape {
+                            appearance USE METAL_APPEARANCE
+                            geometry Cylinder {
+                              height 0.3
+                              radius 0.00225
+                            }
+                          }
+                        ]
+                      }
+                      Transform {
+                        translation 0 0.118 -0.154
+                        rotation 0 0 1 1.5708
+                        children [
+                          Shape {
+                            appearance USE METAL_APPEARANCE
+                            geometry Cylinder {
+                              height 0.3
+                              radius 0.00125
+                            }
+                          }
+                        ]
+                      }
+                      Transform {
+                        translation -0.041 0.155 -0.148
+                        children [
+                          Shape {
+                            appearance USE BLACK_APPEARANCE
+                            geometry Box {
+                              size 0.0141907 0.006 0.04
+                            }
+                          }
+                        ]
+                      }
+                      Transform {
+                        translation -0.036 0.145 -0.116
+                        children [
+                          Shape {
+                            appearance USE METAL_APPEARANCE
+                            geometry Box {
+                              size 0.027 0.03 0.03
+                            }
+                          }
+                        ]
+                      }
+                      Transform {
+                        translation 0.041 0.155 -0.148
+                        children [
+                          Shape {
+                            appearance USE BLACK_APPEARANCE
+                            geometry Box {
+                              size 0.0141907 0.006 0.04
+                            }
+                          }
+                        ]
+                      }
+                      Transform {
+                        translation 0.036 0.145 -0.116
+                        children [
+                          Shape {
+                            appearance USE METAL_APPEARANCE
+                            geometry Box {
+                              size 0.027 0.03 0.03
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+            boundingObject Transform {
+              translation 0 0.0015 -0.019
+              children [
+                Shape {
+                  appearance USE METAL_APPEARANCE
+                  geometry Box {
+                    size 0.315 0.05 0.045
+                  }
+                }
+              ]
+            }
+            physics DEF LIFT_PHYSICS Physics {
+            }
+          }
+        }
+        Transform {
+          translation 0 -0.126 0.135
+          children [
+            DEF BASE_SHAPE_GROUP Group {
+              children [
+                Transform {
+                  translation 0 0.176 -0.154
+                  children [
+                    DEF UPPER_BOX Shape {
+                      appearance USE BLACK_APPEARANCE
+                      geometry Box {
+                        size 0.141092 0.0270038 0.043419
+                      }
+                    }
+                  ]
+                }
+                Transform {
+                  translation 0 -0.355 -0.154
+                  children [
+                    USE UPPER_BOX
+                  ]
+                }
+                Transform {
+                  translation -0.06 -0.085 -0.158
+                  children [
+                    DEF LEFT_BOX Shape {
+                      appearance USE BLACK_APPEARANCE
+                      geometry Box {
+                        size 0.021 0.5125 0.035
+                      }
+                    }
+                  ]
+                }
+                Transform {
+                  translation 0.06 -0.085 -0.158
+                  children [
+                    USE LEFT_BOX
+                  ]
+                }
+                Transform {
+                  translation 0 -0.085 -0.158
+                  children [
+                    DEF CENTER_BOX Shape {
+                      appearance USE BLACK_APPEARANCE
+                      geometry Box {
+                        size 0.044 0.512 0.0315
+                      }
+                    }
+                  ]
+                }
+                Transform {
+                  translation -0.037 -0.084 -0.158
+                  children [
+                    DEF LEFT_CYLINDER Shape {
+                      appearance USE METAL_APPEARANCE
+                      geometry Cylinder {
+                        height 0.512
+                        radius 0.003
+                      }
+                    }
+                  ]
+                }
+                Transform {
+                  translation 0.037 -0.084 -0.158
+                  children [
+                    USE LEFT_CYLINDER
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+      name "Pioneer3 gripper"
+      model "Pioneer3 gripper"
+      boundingObject Transform {
+        translation 0 -0.22 -0.019
+        children [
+          Box {
+            size 0.141 0.55 0.043
+          }
+        ]
+      }
+      physics DEF BASE_PHYSICS Physics {
+        density 500
+      }
+    }
+    DEF WHEEL1 InteriorWheel {
+      translation 0.133 -0.163 -0.015
+      rotation 5.564400156955044e-17 0.9999999999999999 3.8950801098685346e-16 3.0033622445155417
+      anchor 0.133 -0.163 -0.015
+      name "wheel1"
+      sensorName "wheel1sensor"
+    }
+    DEF WHEEL2 ExteriorWheel {
+      translation 0.133 0.163 -0.015
+      rotation -2.334798818480222e-16 1 -2.334798818480222e-16 1.5882963432307244
+      anchor 0.133 0.163 -0.015
+      name "wheel2"
+      sensorName "wheel2sensor"
+    }
+    DEF WHEEL3 ExteriorWheel {
+      translation -0.133 -0.163 -0.015
+      rotation -2.3519109296722874e-16 1 -3.13588123956305e-16 1.573543010148268
+      anchor -0.133 -0.163 -0.015
+      name "wheel3"
+      sensorName "wheel3sensor"
+    }
+    DEF WHEEL4 InteriorWheel {
+      translation -0.133 0.163 -0.015
+      rotation 0 1 0 3.0299994171954423
+      anchor -0.133 0.163 -0.015
+      name "wheel4"
+      sensorName "wheel4sensor"
+    }
+  ]
+  name "SuperBot(1)"
+  boundingObject Box {
+    size 0.4 0.25 0.035
+  }
+  physics Physics {
+    density -1
+    mass 22
+    centerOfMass [
+      0 0 0
+    ]
+  }
+  controller "SuperBot_Controller1_1"
+}
+DEF SEU_SuperBot_1_2 Robot {
+  translation 1.53117 0.0646674 4.3784
+  rotation -0.5658347498210303 0.5830227422215072 0.5830227422215072 2.11176
+  children [
+    DEF Gripper Solid {
+      translation 0.21 0 0
+      children [
+        DEF Up_DownJoint SliderJoint {
+          jointParameters JointParameters {
+            position 0.04999999932944775
+          }
+          device [
+            LinearMotor {
+              name "linear motorMain"
+            }
+          ]
+          endPoint Solid {
+            translation 0 0 -6.705522664907093e-10
+            rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
+            children [
+              DEF Left_Gripper SliderJoint {
+                jointParameters JointParameters {
+                }
+                device [
+                  LinearMotor {
+                    name "linear motorL"
+                    maxPosition 0.2
+                    maxForce 1
+                  }
+                ]
+                endPoint Solid {
+                  translation 0 0.15 -0.105
+                  rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
+                  children [
+                    DEF Left_GripperShape Shape {
+                      appearance PBRAppearance {
+                        baseColor 0 0 0
+                        roughness 1
+                        metalness 0
+                      }
+                      geometry Box {
+                        size 0.02 0.05 0.29
+                      }
+                    }
+                    DEF Left_Barrier Solid {
+                      translation -0.06 0 -0.14
+                      rotation 0.5773502691896257 0.5773502691896257 -0.5773502691896257 -2.1
+                      children [
+                        DEF Left_BarrierShape Shape {
+                          appearance PBRAppearance {
+                            baseColor 0 0 0
+                            roughness 1
+                            metalness 0
+                          }
+                          geometry Box {
+                            size 0.05 0.01 0.1
+                          }
+                        }
+                      ]
+                      boundingObject USE Left_BarrierShape
+                    }
+                  ]
+                  name "solid(1)"
+                  contactMaterial "GripperL"
+                  boundingObject USE Left_GripperShape
+                }
+              }
+              DEF Right_Gripper SliderJoint {
+                jointParameters JointParameters {
+                  axis 0 0 -1
+                }
+                device [
+                  LinearMotor {
+                    name "linear motorR"
+                    maxForce 1
+                  }
+                ]
+                endPoint Solid {
+                  translation 0 0.155 0.105
+                  rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
+                  children [
+                    DEF Right_GripperShape Shape {
+                      appearance PBRAppearance {
+                        roughness 1
+                        metalness 0
+                      }
+                      geometry Box {
+                        size 0.02 0.05 0.3
+                      }
+                    }
+                    DEF Right_Barrier Solid {
+                      translation 0.06 0 -0.145
+                      rotation 0.5773489358556708 0.5773509358554485 -0.5773509358554485 -2.094395307179586
+                      children [
+                        DEF Right_BarrierShape Shape {
+                          appearance PBRAppearance {
+                            roughness 1
+                            metalness 0
+                          }
+                          geometry Box {
+                            size 0.05 0.01 0.1
+                          }
+                        }
+                      ]
+                      name "solid(3)"
+                    }
+                  ]
+                  name "solid(2)"
+                  contactMaterial "GripperR"
+                  boundingObject USE Right_GripperShape
+                }
+              }
+              DEF Up_DownShape Shape {
+                appearance PBRAppearance {
+                  baseColor 0.215686 0.215686 0.215686
+                  roughness 1
+                  metalness 0
+                }
+                geometry Box {
+                  size 0.05 0.01 0.25
+                }
+              }
+            ]
+            boundingObject DEF Up_DownShape0 Shape {
+              appearance PBRAppearance {
+                baseColor 0.215686 0.215686 0.215686
+                roughness 1
+                metalness 0
+              }
+              geometry Box {
+                size 0.05 0.01 0.25
+              }
+            }
+          }
+        }
+      ]
+      name "solid(2)"
+      contactMaterial ""
+    }
     DEF Body Shape {
       appearance PBRAppearance {
         baseColor 0.521569 0.521569 0.521569
@@ -570,34 +1238,34 @@ DEF SEU_SuperBot Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 0 0.9999999999999999 -5.564400156955045e-17 3.003362244515542
+      rotation 5.564400146619549e-17 1 3.895080110089923e-16 3.003362243979546
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
     }
     DEF WHEEL2 ExteriorWheel {
       translation 0.133 0.163 -0.015
-      rotation 8.560929001094243e-16 1 7.782662728267493e-16 1.5882963432307022
+      rotation -2.334798818462941e-16 1 -2.3347988204550733e-16 1.5882963423774878
       anchor 0.133 0.163 -0.015
       name "wheel2"
       sensorName "wheel2sensor"
     }
     DEF WHEEL3 ExteriorWheel {
       translation -0.133 -0.163 -0.015
-      rotation 3.135881239563034e-16 1 3.919851549453793e-16 1.5735430101482786
+      rotation -2.351910929445573e-16 1 -3.1358812411346325e-16 1.573543009574613
       anchor -0.133 -0.163 -0.015
       name "wheel3"
       sensorName "wheel3sensor"
     }
     DEF WHEEL4 InteriorWheel {
       translation -0.133 0.163 -0.015
-      rotation 0 1 7.227697601781485e-16 3.029999417195456
+      rotation 0 0.9999999999999999 0 3.029999416236212
       anchor -0.133 0.163 -0.015
       name "wheel4"
       sensorName "wheel4sensor"
     }
   ]
-  name "SuperBot"
+  name "SuperBot(2)"
   boundingObject Box {
     size 0.4 0.25 0.035
   }
@@ -608,7 +1276,5 @@ DEF SEU_SuperBot Robot {
       0 0 0
     ]
   }
-  controller "SuperBot_Controlller"
-  linearVelocity -1.8987577034539726e-16 -4.3407701675526126e-16 -8.918082634588972e-16
-  angularVelocity -8.350682438887792e-16 9.481233363026976e-16 -7.748011994490716e-16
+  controller ""
 }

@@ -173,13 +173,13 @@ int main(int argc, char **argv) {
         case 330:
         case WB_KEYBOARD_RIGHT | WB_KEYBOARD_SHIFT:
           printf("Close the Claws\n");
-          ClawControll(Target_Width-=0.001);
+          ClawControll(Target_Width-=0.01);
         
           break;
         case 328:
         case WB_KEYBOARD_LEFT | WB_KEYBOARD_SHIFT:
           printf("Open the Claws\n");
-          ClawControll(Target_Width+=0.001);
+          ClawControll(Target_Width+=0.01);
           break;
         default:
           fprintf(stderr, "Wrong keyboard input\n");

@@ -85,6 +85,19 @@ static void UpDownControll(double height)
   wb_motor_set_position(motorM,  height);
 }
 
+static WbDeviceTag gripper_motors[3];
+#define GRIPPER_MOTOR_MAX_SPEED 0.1
+void lift(double position) {
+  wb_motor_set_velocity(gripper_motors[0], GRIPPER_MOTOR_MAX_SPEED);
+  wb_motor_set_position(gripper_motors[0], position);
+}
+
+void moveFingers(double position) {
+  wb_motor_set_velocity(gripper_motors[1], GRIPPER_MOTOR_MAX_SPEED);
+  wb_motor_set_velocity(gripper_motors[2], GRIPPER_MOTOR_MAX_SPEED);
+  wb_motor_set_position(gripper_motors[1], position);
+  wb_motor_set_position(gripper_motors[2], position);
+}
 
 
 int main(int argc, char **argv) {
@@ -98,6 +111,9 @@ int main(int argc, char **argv) {
   int pc = 0;
   wb_keyboard_enable(TIME_STEP);
   
+  gripper_motors[0] = wb_robot_get_device("lift motor");
+  gripper_motors[1] = wb_robot_get_device("left finger motor");
+  gripper_motors[2] = wb_robot_get_device("right finger motor");
   
   motorM = wb_robot_get_device("linear motorMain");
   motorL = wb_robot_get_device("linear motorL");
@@ -108,6 +124,8 @@ int main(int argc, char **argv) {
   //wb_touch_sensor_enable(forceR, TIME_STEP);
   double Target_Height = MIN_HEIGHT;
   double Target_Width = MAX_WIDTH;
+  double width = 0.0;
+  double height = 0.0;
   while (true) {
    // const double force_valueL = wb_touch_sensor_get_value(forceL);
   //  const double force_valueR = wb_touch_sensor_get_value(forceR);
@@ -161,25 +179,29 @@ int main(int argc, char **argv) {
           break;
         case 332:
         case WB_KEYBOARD_UP | WB_KEYBOARD_SHIFT:
+          //UpDownControll(Target_Height+=0.02);
+          lift(height+=0.05);
           printf("Increase arm height\n");
-          UpDownControll(Target_Height+=0.02);
-
           break;
         case 326:
         case WB_KEYBOARD_DOWN | WB_KEYBOARD_SHIFT:
+          
+          //UpDownControll(Target_Height-=0.02);
+          lift(height-=0.05);
           printf("Decrease arm height\n");
-          UpDownControll(Target_Height-=0.02);
+         // arm_decrease_height();
           break;
         case 330:
         case WB_KEYBOARD_RIGHT | WB_KEYBOARD_SHIFT:
           printf("Close the Claws\n");
-          ClawControll(Target_Width-=0.001);
-        
+          //ClawControll(Target_Width-=0.01);
+          moveFingers(width-=0.001);
           break;
         case 328:
         case WB_KEYBOARD_LEFT | WB_KEYBOARD_SHIFT:
           printf("Open the Claws\n");
-          ClawControll(Target_Width+=0.001);
+          //ClawControll(Target_Width+=0.01);
+           moveFingers(width+=0.001);
           break;
         default:
           fprintf(stderr, "Wrong keyboard input\n");
