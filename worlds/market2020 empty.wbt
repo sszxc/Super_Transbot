@@ -45,9 +45,9 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.13370669732640683 -0.9455282900766052 -0.2968143725544225 2.1329463588800177
-  position -0.6678350612932702 1.2240539485946158 3.4674974189550403
-  follow "SuperBot(1)"
+  orientation -0.09610469998203007 -0.9648610266265503 -0.24455487306231175 2.1681111563584037
+  position -0.44630066034493754 1.2888528144744207 3.2793734282561218
+  follow "SuperBot_v3"
   followType "Mounted Shot"
 }
 Background {
@@ -62,12 +62,69 @@ DirectionalLight {
 Floor {
   size 30 30
 }
-CerealBox {
+Solid {
   translation 1.02769 0.0099755 3.87807
   rotation -1.1373899151659374e-05 0.9999999254133916 0.0003860619712049448 0.0129854
+  children [
+    Transform {
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColorMap ImageTexture {
+              url [
+                "C:/Users/Henry/AppData/Local/Programs/Webots/projects/objects/kitchen/breakfast/protos/textures/cereal_box_1.jpg"
+              ]
+            }
+            roughness 0.25
+            metalness 0
+          }
+          geometry IndexedFaceSet {
+            coord Coordinate {
+              point [
+                -0.04 0.3 -0.1
+                -0.04 0.3 0.1
+                0.04 0.3 0.1
+                0.04 0.3 -0.1
+                -0.04 0 -0.1
+                -0.04 0 0.1
+                0.04 0 0.1
+                0.04 0 -0.1
+              ]
+            }
+            texCoord TextureCoordinate {
+              point [
+                0.8571 1, 0.5 1, 0.5 0.8261, 0.8571 0, 0.8571 0.1739, 0.5 0.1739, 0 0.1739, 0.3571 0.1739, 0.3571 0.8261, 0.3571 0.1739, 0.5 0.1739, 0.5 0.8261, 0.5 0.8261, 0.5 0.1739, 0.8571 0.1739, 1 0.8261, 0.8571 0.8261, 0.8571 0.1739, 0.8571 0.8261, 0.8571 1, 0.5 0.8261, 0.5 0, 0.8571 0, 0.5 0.1739, 0 0.8261, 0 0.1739, 0.3571 0.8261, 0.3571 0.8261, 0.3571 0.1739, 0.5 0.8261, 0.8571 0.8261, 0.5 0.8261, 0.8571 0.1739, 1 0.1739, 1 0.8261, 0.8571 0.1739
+              ]
+            }
+            coordIndex [
+              0, 1, 2, -1, 4, 7, 6, -1, 4, 5, 1, -1, 5, 6, 2, -1, 2, 6, 7, -1, 0, 3, 7, -1, 3, 0, 2, -1, 5, 4, 6, -1, 0, 4, 1, -1, 1, 5, 2, -1, 3, 2, 7, -1, 4, 0, 7, -1
+            ]
+            texCoordIndex [
+              0, 1, 2, -1, 3, 4, 5, -1, 6, 7, 8, -1, 9, 10, 11, -1, 12, 13, 14, -1, 15, 16, 17, -1, 18, 19, 20, -1, 21, 22, 23, -1, 24, 25, 26, -1, 27, 28, 29, -1, 30, 31, 32, -1, 33, 34, 35, -1
+            ]
+          }
+        }
+      ]
+    }
+  ]
   name "cereal box(16)"
-  textureUrl [
-    "textures/cereal_box_1.jpg"
+  model "cereal box"
+  boundingObject Transform {
+    translation 0 0.15 0
+    children [
+      Shape {
+        geometry Box {
+          size 0.08 0.3 0.2
+        }
+      }
+    ]
+  }
+  physics Physics {
+    density -1
+    mass 1
+  }
+  recognitionColors [
+    1 0 0
   ]
 }
 BiscuitBox {
@@ -606,7 +663,7 @@ DEF SEU_SuperBot_v1 Robot {
       sensorName "wheel4sensor"
     }
   ]
-  name "SuperBot"
+  name "SuperBot_v1"
   boundingObject Box {
     size 0.4 0.25 0.035
   }
@@ -796,13 +853,13 @@ DEF SEU_SuperBot_v2 Robot {
     }
     DEF WHEEL4 InteriorWheel {
       translation -0.133 0.163 -0.015
-      rotation 0 0.9999999999999999 0 3.029999416236212
+      rotation 0 1 0 3.029999416236212
       anchor -0.133 0.163 -0.015
       name "wheel4"
       sensorName "wheel4sensor"
     }
   ]
-  name "SuperBot(2)"
+  name "SuperBot_v2"
   boundingObject Box {
     size 0.4 0.25 0.035
   }
@@ -819,6 +876,70 @@ DEF SEU_SuperBot_v3 Robot {
   translation 1.03232 0.0646674 4.39375
   rotation -0.5708721963595179 0.5805621996925308 0.5805621996925308 2.10414
   children [
+    Camera {
+      translation 0.189599 7.50048e-05 0.179525
+      rotation -0.5773502691896258 0.5773502691896258 0.5773502691896258 -2.09
+      children [
+        Transform {
+          translation 0 0 0.015
+          rotation 1 0 0 1.57
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0 0.5 1
+                roughness 1
+                metalness 0
+              }
+              geometry Cylinder {
+                height 0.03
+                radius 0.02
+              }
+            }
+          ]
+        }
+      ]
+      name "camera_front"
+      fieldOfView 1.0472
+      width 256
+      height 128
+      antiAliasing TRUE
+      recognition Recognition {
+        frameColor 0.929412 0.831373 0
+        frameThickness 3
+      }
+    }
+    Camera {
+      translation 0.430151 0.00124202 0.598924
+      rotation 0.002540739421513401 -7.192318362421683e-09 0.9999967723163868 -1.568265307179586
+      children [
+        Transform {
+          translation 0 0 0.015
+          rotation 1 0 0 1.57
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0 1 0.5
+                roughness 1
+                metalness 0
+              }
+              geometry Cylinder {
+                height 0.03
+                radius 0.02
+              }
+            }
+          ]
+        }
+      ]
+      name "camera_top"
+      fieldOfView 1.5
+      width 128
+      height 128
+      antiAliasing TRUE
+      recognition Recognition {
+        frameColor 0.929412 0.831373 0
+        frameThickness 3
+      }
+    }
     DEF Body Group {
       children [
         Transform {
@@ -1238,7 +1359,7 @@ DEF SEU_SuperBot_v3 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.564400156955044e-17 0.9999999999999999 3.8950801098685356e-16 3.0033622445155417
+      rotation 5.564400156955044e-17 0.9999999999999999 3.895080109868541e-16 3.0033622445155417
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
@@ -1259,13 +1380,13 @@ DEF SEU_SuperBot_v3 Robot {
     }
     DEF WHEEL4 InteriorWheel {
       translation -0.133 0.163 -0.015
-      rotation 0 1 0 3.0299994171954423
+      rotation 0 0.9999999999999999 0 3.0299994171954423
       anchor -0.133 0.163 -0.015
       name "wheel4"
       sensorName "wheel4sensor"
     }
   ]
-  name "SuperBot(1)"
+  name "SuperBot_v3"
   boundingObject Box {
     size 0.4 0.25 0.035
   }
