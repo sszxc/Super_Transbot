@@ -68,6 +68,12 @@ WbDeviceTag motorL;
 WbDeviceTag motorR;
 WbDeviceTag forceL;
 WbDeviceTag forceR;
+#define MAX_HEIGHT 0.4f
+#define MIN_HEIGHT 0.03f
+WbDeviceTag motorM;
+#define GRIPPER_MOTOR_MAX_SPEED 0.1
+static WbDeviceTag gripper_motors[3];
+static WbDeviceTag camera[2];
 
 double width = 0.0; //抓手目标值
 double height = 0.0;
@@ -78,17 +84,12 @@ void ClawControll(double width)
   wb_motor_set_position(motorR,(MAX_WIDTH-width)/2);
 }
 
-#define MAX_HEIGHT 0.4f
-#define MIN_HEIGHT 0.03f
-WbDeviceTag motorM;
 static void UpDownControll(double height)
 {
   height = max(min(abs(height),MAX_HEIGHT),MIN_HEIGHT);
   wb_motor_set_position(motorM,  height);
 }
 
-static WbDeviceTag gripper_motors[3];
-#define GRIPPER_MOTOR_MAX_SPEED 0.1
 void lift(double position) {
   wb_motor_set_velocity(gripper_motors[0], GRIPPER_MOTOR_MAX_SPEED);
   wb_motor_set_position(gripper_motors[0], position);
@@ -101,18 +102,19 @@ void moveFingers(double position) {
   wb_motor_set_position(gripper_motors[2], position);
 }
 
-void init_all(){
-// 机器人初始化
+void init_all()
+{
+  // 机器人初始化
   wb_robot_init();
   base_init();
   passive_wait(2.0);
 
-  WbDeviceTag camera_top = wb_robot_get_device("camera_top"); //相机初始化
-  WbDeviceTag camera_front = wb_robot_get_device("camera_front");
-  wb_camera_enable(camera_top, TIME_STEP);
-  wb_camera_recognition_enable(camera_top, TIME_STEP);
-  wb_camera_enable(camera_front, TIME_STEP);
-  wb_camera_recognition_enable(camera_front, TIME_STEP);
+  camera[0] = wb_robot_get_device("camera_top"); //相机初始化
+  camera[1] = wb_robot_get_device("camera_front");
+  wb_camera_enable(camera[0], TIME_STEP);
+  wb_camera_recognition_enable(camera[0], TIME_STEP);
+  wb_camera_enable(camera[1], TIME_STEP);
+  wb_camera_recognition_enable(camera[1], TIME_STEP);
 
   display_helper_message();
 
@@ -220,8 +222,28 @@ int FindEmpty(int state){
   return state;
 }
 
-int FindGoods(int state, int goods_class){
-// 前部摄像头寻找指定商品 给一个固定的巡逻轨迹 靠近直到顶部摄像头能捕捉
+int FindGoods(int state, WbDeviceTag camera, int goods_class){
+  // 前部摄像头寻找指定商品 给一个固定的巡逻轨迹 靠近直到顶部摄像头能捕捉
+  // 下面是demo 看起来一个摄像头就够了
+  int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
+  printf("\n识别到 %d 个物体.\n", number_of_objects);
+  const WbCameraRecognitionObject *objects = wb_camera_recognition_get_objects(camera);
+  for (int i = 0; i < number_of_objects; ++i)
+  {
+    printf("物体 %d 的类型: %s\n", i, objects[i].model);
+    printf("物体 %d 的ID: %d\n", i, objects[i].id);
+    printf("物体 %d 的相对位置: %lf %lf %lf\n", i, objects[i].position[0], objects[i].position[1],
+          objects[i].position[2]);
+    printf("物体 %d 的相对姿态: %lf %lf %lf %lf\n", i, objects[i].orientation[0], objects[i].orientation[1],
+          objects[i].orientation[2], objects[i].orientation[3]);
+    printf("物体的大小 %d: %lf %lf\n", i, objects[i].size[0], objects[i].size[1]);
+    printf("物体 %d 在图像中的坐标: %d %d\n", i, objects[i].position_on_image[0],
+          objects[i].position_on_image[1]);
+    printf("物体 %d 在图像中的大小: %d %d\n", i, objects[i].size_on_image[0], objects[i].size_on_image[1]);
+    for (int j = 0; j < objects[i].number_of_colors; ++j)
+      printf("颜色 %d/%d: %lf %lf %lf\n", j + 1, objects[i].number_of_colors, objects[i].colors[3 * j],
+            objects[i].colors[3 * j + 1], objects[i].colors[3 * j + 2]);
+  }
   return state;
 }
 
@@ -252,6 +274,7 @@ int main(int argc, char **argv) {
   // }
     step();
     keyboard_control(wb_keyboard_get_key());
+    main_state = FindGoods(main_state, camera[1], 0);
   }
 
   wb_robot_cleanup();
