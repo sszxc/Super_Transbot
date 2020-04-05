@@ -45,8 +45,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.2589603555951831 -0.9075055987127895 -0.3307160754105518 1.719181862109928
-  position -0.7199189189823767 1.1469179129019955 4.107285600359506
+  orientation -0.13370669732640683 -0.9455282900766052 -0.2968143725544225 2.1329463588800177
+  position -0.6678350612932702 1.2240539485946158 3.4674974189550403
   follow "SuperBot(1)"
   followType "Mounted Shot"
 }
@@ -465,7 +465,7 @@ DEF Youbo Robot {
   }
   controller ""
 }
-DEF SEU_SuperBot Robot {
+DEF SEU_SuperBot_v1 Robot {
   translation 0.561813 0.0646674 4.40922
   rotation -0.5633156863306495 0.5842411477865237 0.5842411477865236 2.1155749025935027
   children [
@@ -619,7 +619,203 @@ DEF SEU_SuperBot Robot {
   }
   controller ""
 }
-DEF SEU_SuperBot_1_1 Robot {
+DEF SEU_SuperBot_v2 Robot {
+  translation 1.53117 0.0646674 4.3784
+  rotation -0.5658347498210303 0.5830227422215072 0.5830227422215072 2.11176
+  children [
+    DEF Gripper Solid {
+      translation 0.21 0 0
+      children [
+        DEF Up_DownJoint SliderJoint {
+          jointParameters JointParameters {
+            position 0.04999999932944775
+          }
+          device [
+            LinearMotor {
+              name "linear motorMain"
+            }
+          ]
+          endPoint Solid {
+            translation 0 0 -6.705522664907093e-10
+            rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
+            children [
+              DEF Left_Gripper SliderJoint {
+                jointParameters JointParameters {
+                }
+                device [
+                  LinearMotor {
+                    name "linear motorL"
+                    maxPosition 0.2
+                    maxForce 1
+                  }
+                ]
+                endPoint Solid {
+                  translation 0 0.15 -0.105
+                  rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
+                  children [
+                    DEF Left_GripperShape Shape {
+                      appearance PBRAppearance {
+                        baseColor 0 0 0
+                        roughness 1
+                        metalness 0
+                      }
+                      geometry Box {
+                        size 0.02 0.05 0.29
+                      }
+                    }
+                    DEF Left_Barrier Solid {
+                      translation -0.06 0 -0.14
+                      rotation 0.5773502691896257 0.5773502691896257 -0.5773502691896257 -2.1
+                      children [
+                        DEF Left_BarrierShape Shape {
+                          appearance PBRAppearance {
+                            baseColor 0 0 0
+                            roughness 1
+                            metalness 0
+                          }
+                          geometry Box {
+                            size 0.05 0.01 0.1
+                          }
+                        }
+                      ]
+                      boundingObject USE Left_BarrierShape
+                    }
+                  ]
+                  name "solid(1)"
+                  contactMaterial "GripperL"
+                  boundingObject USE Left_GripperShape
+                }
+              }
+              DEF Right_Gripper SliderJoint {
+                jointParameters JointParameters {
+                  axis 0 0 -1
+                }
+                device [
+                  LinearMotor {
+                    name "linear motorR"
+                    maxForce 1
+                  }
+                ]
+                endPoint Solid {
+                  translation 0 0.155 0.105
+                  rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
+                  children [
+                    DEF Right_GripperShape Shape {
+                      appearance PBRAppearance {
+                        roughness 1
+                        metalness 0
+                      }
+                      geometry Box {
+                        size 0.02 0.05 0.3
+                      }
+                    }
+                    DEF Right_Barrier Solid {
+                      translation 0.06 0 -0.145
+                      rotation 0.5773489358556708 0.5773509358554485 -0.5773509358554485 -2.094395307179586
+                      children [
+                        DEF Right_BarrierShape Shape {
+                          appearance PBRAppearance {
+                            roughness 1
+                            metalness 0
+                          }
+                          geometry Box {
+                            size 0.05 0.01 0.1
+                          }
+                        }
+                      ]
+                      name "solid(3)"
+                    }
+                  ]
+                  name "solid(2)"
+                  contactMaterial "GripperR"
+                  boundingObject USE Right_GripperShape
+                }
+              }
+              DEF Up_DownShape Shape {
+                appearance PBRAppearance {
+                  baseColor 0.215686 0.215686 0.215686
+                  roughness 1
+                  metalness 0
+                }
+                geometry Box {
+                  size 0.05 0.01 0.25
+                }
+              }
+            ]
+            boundingObject DEF Up_DownShape0 Shape {
+              appearance PBRAppearance {
+                baseColor 0.215686 0.215686 0.215686
+                roughness 1
+                metalness 0
+              }
+              geometry Box {
+                size 0.05 0.01 0.25
+              }
+            }
+          }
+        }
+      ]
+      name "solid(2)"
+      contactMaterial ""
+    }
+    DEF Body Shape {
+      appearance PBRAppearance {
+        baseColor 0.521569 0.521569 0.521569
+        baseColorMap ImageTexture {
+          url [
+            "textures/texture_grid.png"
+          ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.4 0.25 0.035
+      }
+    }
+    DEF WHEEL1 InteriorWheel {
+      translation 0.133 -0.163 -0.015
+      rotation 5.564400146619549e-17 1 3.895080110089923e-16 3.003362243979546
+      anchor 0.133 -0.163 -0.015
+      name "wheel1"
+      sensorName "wheel1sensor"
+    }
+    DEF WHEEL2 ExteriorWheel {
+      translation 0.133 0.163 -0.015
+      rotation -2.334798818462941e-16 1 -2.3347988204550733e-16 1.5882963423774878
+      anchor 0.133 0.163 -0.015
+      name "wheel2"
+      sensorName "wheel2sensor"
+    }
+    DEF WHEEL3 ExteriorWheel {
+      translation -0.133 -0.163 -0.015
+      rotation -2.351910929445573e-16 1 -3.1358812411346325e-16 1.573543009574613
+      anchor -0.133 -0.163 -0.015
+      name "wheel3"
+      sensorName "wheel3sensor"
+    }
+    DEF WHEEL4 InteriorWheel {
+      translation -0.133 0.163 -0.015
+      rotation 0 0.9999999999999999 0 3.029999416236212
+      anchor -0.133 0.163 -0.015
+      name "wheel4"
+      sensorName "wheel4sensor"
+    }
+  ]
+  name "SuperBot(2)"
+  boundingObject Box {
+    size 0.4 0.25 0.035
+  }
+  physics Physics {
+    density -1
+    mass 22
+    centerOfMass [
+      0 0 0
+    ]
+  }
+  controller ""
+}
+DEF SEU_SuperBot_v3 Robot {
   translation 1.03232 0.0646674 4.39375
   rotation -0.5708721963595179 0.5805621996925308 0.5805621996925308 2.10414
   children [
@@ -1042,7 +1238,7 @@ DEF SEU_SuperBot_1_1 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.564400156955044e-17 0.9999999999999999 3.8950801098685346e-16 3.0033622445155417
+      rotation 5.564400156955044e-17 0.9999999999999999 3.8950801098685356e-16 3.0033622445155417
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
@@ -1080,201 +1276,5 @@ DEF SEU_SuperBot_1_1 Robot {
       0 0 0
     ]
   }
-  controller "SuperBot_Controller1_1"
-}
-DEF SEU_SuperBot_1_2 Robot {
-  translation 1.53117 0.0646674 4.3784
-  rotation -0.5658347498210303 0.5830227422215072 0.5830227422215072 2.11176
-  children [
-    DEF Gripper Solid {
-      translation 0.21 0 0
-      children [
-        DEF Up_DownJoint SliderJoint {
-          jointParameters JointParameters {
-            position 0.04999999932944775
-          }
-          device [
-            LinearMotor {
-              name "linear motorMain"
-            }
-          ]
-          endPoint Solid {
-            translation 0 0 -6.705522664907093e-10
-            rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
-            children [
-              DEF Left_Gripper SliderJoint {
-                jointParameters JointParameters {
-                }
-                device [
-                  LinearMotor {
-                    name "linear motorL"
-                    maxPosition 0.2
-                    maxForce 1
-                  }
-                ]
-                endPoint Solid {
-                  translation 0 0.15 -0.105
-                  rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
-                  children [
-                    DEF Left_GripperShape Shape {
-                      appearance PBRAppearance {
-                        baseColor 0 0 0
-                        roughness 1
-                        metalness 0
-                      }
-                      geometry Box {
-                        size 0.02 0.05 0.29
-                      }
-                    }
-                    DEF Left_Barrier Solid {
-                      translation -0.06 0 -0.14
-                      rotation 0.5773502691896257 0.5773502691896257 -0.5773502691896257 -2.1
-                      children [
-                        DEF Left_BarrierShape Shape {
-                          appearance PBRAppearance {
-                            baseColor 0 0 0
-                            roughness 1
-                            metalness 0
-                          }
-                          geometry Box {
-                            size 0.05 0.01 0.1
-                          }
-                        }
-                      ]
-                      boundingObject USE Left_BarrierShape
-                    }
-                  ]
-                  name "solid(1)"
-                  contactMaterial "GripperL"
-                  boundingObject USE Left_GripperShape
-                }
-              }
-              DEF Right_Gripper SliderJoint {
-                jointParameters JointParameters {
-                  axis 0 0 -1
-                }
-                device [
-                  LinearMotor {
-                    name "linear motorR"
-                    maxForce 1
-                  }
-                ]
-                endPoint Solid {
-                  translation 0 0.155 0.105
-                  rotation -0.5773509358554485 -0.5773509358554485 0.5773489358556708 -2.094395307179586
-                  children [
-                    DEF Right_GripperShape Shape {
-                      appearance PBRAppearance {
-                        roughness 1
-                        metalness 0
-                      }
-                      geometry Box {
-                        size 0.02 0.05 0.3
-                      }
-                    }
-                    DEF Right_Barrier Solid {
-                      translation 0.06 0 -0.145
-                      rotation 0.5773489358556708 0.5773509358554485 -0.5773509358554485 -2.094395307179586
-                      children [
-                        DEF Right_BarrierShape Shape {
-                          appearance PBRAppearance {
-                            roughness 1
-                            metalness 0
-                          }
-                          geometry Box {
-                            size 0.05 0.01 0.1
-                          }
-                        }
-                      ]
-                      name "solid(3)"
-                    }
-                  ]
-                  name "solid(2)"
-                  contactMaterial "GripperR"
-                  boundingObject USE Right_GripperShape
-                }
-              }
-              DEF Up_DownShape Shape {
-                appearance PBRAppearance {
-                  baseColor 0.215686 0.215686 0.215686
-                  roughness 1
-                  metalness 0
-                }
-                geometry Box {
-                  size 0.05 0.01 0.25
-                }
-              }
-            ]
-            boundingObject DEF Up_DownShape0 Shape {
-              appearance PBRAppearance {
-                baseColor 0.215686 0.215686 0.215686
-                roughness 1
-                metalness 0
-              }
-              geometry Box {
-                size 0.05 0.01 0.25
-              }
-            }
-          }
-        }
-      ]
-      name "solid(2)"
-      contactMaterial ""
-    }
-    DEF Body Shape {
-      appearance PBRAppearance {
-        baseColor 0.521569 0.521569 0.521569
-        baseColorMap ImageTexture {
-          url [
-            "textures/texture_grid.png"
-          ]
-        }
-        roughness 1
-        metalness 0
-      }
-      geometry Box {
-        size 0.4 0.25 0.035
-      }
-    }
-    DEF WHEEL1 InteriorWheel {
-      translation 0.133 -0.163 -0.015
-      rotation 5.564400146619549e-17 1 3.895080110089923e-16 3.003362243979546
-      anchor 0.133 -0.163 -0.015
-      name "wheel1"
-      sensorName "wheel1sensor"
-    }
-    DEF WHEEL2 ExteriorWheel {
-      translation 0.133 0.163 -0.015
-      rotation -2.334798818462941e-16 1 -2.3347988204550733e-16 1.5882963423774878
-      anchor 0.133 0.163 -0.015
-      name "wheel2"
-      sensorName "wheel2sensor"
-    }
-    DEF WHEEL3 ExteriorWheel {
-      translation -0.133 -0.163 -0.015
-      rotation -2.351910929445573e-16 1 -3.1358812411346325e-16 1.573543009574613
-      anchor -0.133 -0.163 -0.015
-      name "wheel3"
-      sensorName "wheel3sensor"
-    }
-    DEF WHEEL4 InteriorWheel {
-      translation -0.133 0.163 -0.015
-      rotation 0 0.9999999999999999 0 3.029999416236212
-      anchor -0.133 0.163 -0.015
-      name "wheel4"
-      sensorName "wheel4sensor"
-    }
-  ]
-  name "SuperBot(2)"
-  boundingObject Box {
-    size 0.4 0.25 0.035
-  }
-  physics Physics {
-    density -1
-    mass 22
-    centerOfMass [
-      0 0 0
-    ]
-  }
-  controller ""
+  controller "SuperBot_Controller_v3"
 }
