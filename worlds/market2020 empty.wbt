@@ -45,8 +45,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.10133899993604856 -0.9618652157193577 -0.25405848515866364 2.170085623308191
-  position -0.4463138178944251 1.2795316778245671 3.2413487480219105
+  orientation -0.9986929255811051 0.03446471878103837 -0.0377441856925932 1.1967139377003726
+  position 1.9445828828634117 5.546911603799396 2.9481115097181267
   follow "SuperBot_v3"
   followType "Mounted Shot"
 }
@@ -63,8 +63,8 @@ Floor {
   size 30 30
 }
 Solid {
-  translation 1.02769 0.0099755 3.87807
-  rotation -1.1373899151659374e-05 0.9999999254133916 0.0003860619712049448 0.0129854
+  translation 1.0276900000000366 -2.4525074998171803e-05 3.8780699999999975
+  rotation -8.919535055794954e-12 0.9999999999999999 2.7509265273229905e-10 0.01298539903112686
   children [
     Transform {
       children [
@@ -72,7 +72,7 @@ Solid {
           appearance PBRAppearance {
             baseColorMap ImageTexture {
               url [
-                "C:/Users/Henry/AppData/Local/Programs/Webots/projects/objects/kitchen/breakfast/protos/textures/cereal_box_1.jpg"
+                "F:/Webots2020/Webots/projects/objects/kitchen/breakfast/protos/textures/cereal_box_1.jpg"
               ]
             }
             roughness 0.25
@@ -128,15 +128,15 @@ Solid {
   ]
 }
 BiscuitBox {
-  translation 1.80935 0.001421 3.22472
-  rotation 1.92322e-08 1 -2.50203e-11 -1.5707953071795862
+  translation 1.809349999999999 -1.2262861984732587e-05 3.2247200000000005
+  rotation 1.4944844752560416e-14 0.9999999999999999 -8.228894027507266e-17 -1.5707953071795857
   name "biscuit box(5)"
   size 0.14 0.18 0.08
   mass 0.5
 }
 WaterBottle {
-  translation -0.13380299999999998 0.008901899419979875 -1.28656
-  rotation -2.888080518698505e-16 1 -4.594122899653438e-16 -0.261795307179586
+  translation -0.133803 -0.002024525600125504 -1.28656
+  rotation -3.5409053437686457e-16 1 -8.766158780699667e-18 -0.261795307179586
   name "water bottle(2)"
 }
 Floor {
@@ -168,7 +168,7 @@ Floor {
   size 3 3
 }
 DEF SHELF1 Cabinet {
-  translation -2.00631 0.00999986 -0.00808912
+  translation -2.01 0.001 -0.008
   rotation 6.64575e-11 1 -1.9239e-08 1.56423
   name "cabinet(4)"
   depth 0.3
@@ -202,7 +202,7 @@ DEF SHELF1 Cabinet {
   }
 }
 DEF SHELF2 Cabinet {
-  translation 1.99373 0.00999986 -0.18975
+  translation 2.01 0.01 -0.008
   rotation -1.91133e-08 -1 -6.60232e-11 1.57736
   name "cabinet(2)"
   depth 0.3
@@ -270,7 +270,7 @@ DEF SHELF3 Cabinet {
   }
 }
 DEF SHELF4 Cabinet {
-  translation 0.191076 0.01 3.17048
+  translation 0.012 0.01 2.01
   rotation -9.58636e-09 -1 -1.22918e-14 -3.1415853071795863
   name "cabinet(1)"
   depth 0.3
@@ -369,8 +369,8 @@ DEF R4 Solid {
   boundingObject USE r1
 }
 DEF Youbo Robot {
-  translation 3.035962720751979 0.10461535939446806 0.42814581681368
-  rotation -0.01156108975725433 0.7070594227641015 0.7070596254094278 3.118431578744902
+  translation 3.035962720751776 0.10461535939465959 0.4281458168154702
+  rotation -0.011561089757256724 0.7070594227641015 0.7070596254094277 3.118431578744908
   children [
     DEF Tailsolid Solid {
       translation -0.293 -0.00557028 0.0141442
@@ -403,25 +403,25 @@ DEF Youbo Robot {
     Group {
     }
     DEF WHEEL1 InteriorWheel {
-      translation 0.22800000085776656 -0.15799999999999356 -0.05495647476555789
+      translation 0.22800000085776814 -0.15799999999999356 -0.05495647476555789
       anchor 0.228 -0.158 -0.055
       name "wheel1"
       sensorName "wheel1sensor"
     }
     DEF WHEEL2 ExteriorWheel {
-      translation 0.22800000085775984 0.1579999999999937 -0.054956474765557956
+      translation 0.22800000085776143 0.1579999999999937 -0.054956474765557956
       anchor 0.228 0.158 -0.055
       name "wheel2"
       sensorName "wheel2sensor"
     }
     DEF WHEEL3 ExteriorWheel {
-      translation -0.22799999911784388 -0.1579999999999936 -0.05495523523445917
+      translation -0.22799999911784227 -0.1579999999999936 -0.05495523523445917
       anchor -0.228 -0.158 -0.055
       name "wheel3"
       sensorName "wheel3sensor"
     }
     DEF WHEEL4 InteriorWheel {
-      translation -0.22799999911784627 0.1579999999999936 -0.05495523523445914
+      translation -0.22799999911784466 0.1579999999999936 -0.05495523523445914
       anchor -0.228 0.158 -0.055
       name "wheel4"
       sensorName "wheel4sensor"
@@ -523,8 +523,8 @@ DEF Youbo Robot {
   controller ""
 }
 DEF SEU_SuperBot_v1 Robot {
-  translation 0.561813 0.0646674 4.40922
-  rotation -0.5633156863306495 0.5842411477865237 0.5842411477865236 2.1155749025935027
+  translation 0.561813 0.06466744100015752 4.40922
+  rotation -0.5633156863306495 0.5842411477865237 0.5842411477865235 2.1155749025935027
   children [
     DEF BodyBase Shape {
       appearance PBRAppearance {
@@ -636,28 +636,28 @@ DEF SEU_SuperBot_v1 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.564400156955028e-17 1 3.8950801098685317e-16 3.0033622445155412
+      rotation 5.564400156955032e-17 1 3.8950801098685317e-16 3.0033622445155412
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
     }
     DEF WHEEL2 ExteriorWheel {
       translation 0.133 0.163 -0.015
-      rotation -2.3347988184802216e-16 0.9999999999999999 -2.3347988184802285e-16 1.588296343230722
+      rotation -2.334798818480222e-16 0.9999999999999999 -2.334798818480227e-16 1.5882963432307229
       anchor 0.133 0.163 -0.015
       name "wheel2"
       sensorName "wheel2sensor"
     }
     DEF WHEEL3 ExteriorWheel {
       translation -0.133 -0.163 -0.015
-      rotation -2.3519109296722884e-16 1 -3.135881239563047e-16 1.5735430101482688
+      rotation -2.351910929672289e-16 1 -3.1358812395630436e-16 1.5735430101482704
       anchor -0.133 -0.163 -0.015
       name "wheel3"
       sensorName "wheel3sensor"
     }
     DEF WHEEL4 InteriorWheel {
       translation -0.133 0.163 -0.015
-      rotation 0 1 0 3.0299994171954414
+      rotation 0 1 0 3.029999417195441
       anchor -0.133 0.163 -0.015
       name "wheel4"
       sensorName "wheel4sensor"
@@ -677,8 +677,8 @@ DEF SEU_SuperBot_v1 Robot {
   controller ""
 }
 DEF SEU_SuperBot_v2 Robot {
-  translation 1.53117 0.0646674 4.3784
-  rotation -0.5658347498210303 0.5830227422215072 0.5830227422215072 2.11176
+  translation 1.5311702081267573 0.0646674410001575 4.378400201990374
+  rotation -0.5658335175709451 0.5830233401816731 0.5830233401817598 2.111756374834584
   children [
     DEF Gripper Solid {
       translation 0.21 0 0
@@ -832,28 +832,28 @@ DEF SEU_SuperBot_v2 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.564400146619549e-17 1 3.895080110089923e-16 3.003362243979546
+      rotation 5.56440014661948e-17 1 3.895080110089919e-16 3.0033622439795424
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
     }
     DEF WHEEL2 ExteriorWheel {
       translation 0.133 0.163 -0.015
-      rotation -2.334798818462941e-16 1 -2.3347988204550733e-16 1.5882963423774878
+      rotation -2.334798818462941e-16 1 -2.3347988204550856e-16 1.5882963423774825
       anchor 0.133 0.163 -0.015
       name "wheel2"
       sensorName "wheel2sensor"
     }
     DEF WHEEL3 ExteriorWheel {
       translation -0.133 -0.163 -0.015
-      rotation -2.351910929445573e-16 1 -3.1358812411346325e-16 1.573543009574613
+      rotation -2.3519109294455747e-16 1 -3.135881241134622e-16 1.5735430095746168
       anchor -0.133 -0.163 -0.015
       name "wheel3"
       sensorName "wheel3sensor"
     }
     DEF WHEEL4 InteriorWheel {
       translation -0.133 0.163 -0.015
-      rotation 0 1 0 3.029999416236212
+      rotation 0 1 0 3.029999416236216
       anchor -0.133 0.163 -0.015
       name "wheel4"
       sensorName "wheel4sensor"
@@ -873,9 +873,19 @@ DEF SEU_SuperBot_v2 Robot {
   controller ""
 }
 DEF SEU_SuperBot_v3 Robot {
-  translation 1.03232 0.0646674 4.39375
-  rotation -0.5708721963595179 0.5805621996925308 0.5805621996925308 2.10414
+  translation 1.29978 0.064629 1.53088
+  rotation 0.5709569922309883 -0.5806419920992044 -0.580398992102511 -2.1043853071795864
   children [
+    GPS {
+    }
+    GPS {
+      name "gps_copy"
+    }
+    Compass {
+    }
+    Compass {
+      name "compass_copy"
+    }
     Camera {
       translation 0.189599 7.50048e-05 0.179525
       rotation -0.5773502691896258 0.5773502691896258 0.5773502691896258 -2.09
@@ -1014,6 +1024,7 @@ DEF SEU_SuperBot_v3 Robot {
       children [
         DEF LIFT_SLIDER SliderJoint {
           jointParameters JointParameters {
+            position -1.0145812428507066e-05
             axis 0 -1 0
           }
           device [
@@ -1025,10 +1036,11 @@ DEF SEU_SuperBot_v3 Robot {
             }
           ]
           endPoint DEF LIFT Solid {
-            translation 0 0 -0.0425
+            translation 0 1.0145812428507066e-05 -0.0425
             children [
               DEF LEFT_FINGER_SLIDER SliderJoint {
                 jointParameters JointParameters {
+                  position 6.5465399843217e-12
                   axis -1 0 0
                 }
                 device [
@@ -1038,7 +1050,7 @@ DEF SEU_SuperBot_v3 Robot {
                   }
                 ]
                 endPoint DEF LEFT_FINGER Solid {
-                  translation -0.022 0 -0.02
+                  translation -0.02200000000654654 0 -0.02
                   children [
                     Group {
                       children [
@@ -1087,16 +1099,18 @@ DEF SEU_SuperBot_v3 Robot {
               }
               DEF RIGHT_FINGER_SLIDER SliderJoint {
                 jointParameters JointParameters {
+                  position -6.5452228496291956e-12
                   axis 1 0 0
                 }
                 device [
                   LinearMotor {
                     name "right finger motor"
+                    minPosition -6.5452228496291956e-12
                     maxPosition 0.1
                   }
                 ]
                 endPoint DEF RIGHT_FINGER Solid {
-                  translation 0.022 0 -0.02
+                  translation 0.021999999993454776 0 -0.02
                   children [
                     Group {
                       children [
@@ -1359,28 +1373,28 @@ DEF SEU_SuperBot_v3 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.564400156955044e-17 0.9999999999999999 3.895080109868541e-16 3.0033622445155417
+      rotation 5.564400135774798e-17 1 3.8950801103222455e-16 3.0033622434171425
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
     }
     DEF WHEEL2 ExteriorWheel {
       translation 0.133 0.163 -0.015
-      rotation -2.334798818480222e-16 1 -2.334798818480222e-16 1.5882963432307244
+      rotation -2.3347988182856284e-16 0.9999999999999999 -2.3347988407209257e-16 1.5882963336216265
       anchor 0.133 0.163 -0.015
       name "wheel2"
       sensorName "wheel2sensor"
     }
     DEF WHEEL3 ExteriorWheel {
       translation -0.133 -0.163 -0.015
-      rotation -2.3519109296722874e-16 1 -3.13588123956305e-16 1.573543010148268
+      rotation -2.351910932550493e-16 1 -3.1358812196114413e-16 1.5735430174309475
       anchor -0.133 -0.163 -0.015
       name "wheel3"
       sensorName "wheel3sensor"
     }
     DEF WHEEL4 InteriorWheel {
       translation -0.133 0.163 -0.015
-      rotation 0 0.9999999999999999 0 3.0299994171954423
+      rotation 0 0.9999999999999999 0 3.0299994185840586
       anchor -0.133 0.163 -0.015
       name "wheel4"
       sensorName "wheel4sensor"

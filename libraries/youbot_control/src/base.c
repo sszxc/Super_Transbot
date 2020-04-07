@@ -19,18 +19,15 @@
  */
 
 #include "base.h"
-
-#include "tiny_math.h"
-
 #include <webots/compass.h>
 #include <webots/gps.h>
 #include <webots/motor.h>
 #include <webots/robot.h>
-
+#include "tiny_math.h"
 #include <math.h>
 #include <stdio.h>
 
-#define SPEED 10
+#define SPEED 12
 #define DISTANCE_TOLERANCE 0.001
 #define ANGLE_TOLERANCE 0.001
 
@@ -208,3 +205,21 @@ void base_goto_run() {
 bool base_goto_reached() {
   return goto_data.reached;
 }
+
+// Vector2 get_gps_values(){
+//   const double *gps_raw_values = wb_gps_get_values(gps);  
+//   Vector2 v_gps = {gps_raw_values[0], gps_raw_values[2]};
+//   return v_gps;
+// }
+
+// double get_compass_angle(){
+//   const double *compass_raw_values = wb_compass_get_values(compass);
+//   Vector2 v_front = {compass_raw_values[0], compass_raw_values[1]};
+//   Vector2 v_north = {1.0, 0.0};
+//   // compute absolute angle & delta with the delta with the target angle
+//   double theta = vector2_angle(&v_front, &v_north);
+//   return theta;
+// }
+
+
+

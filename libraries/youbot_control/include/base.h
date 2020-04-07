@@ -22,6 +22,7 @@
 #define BASE_H
 
 #include <webots/types.h>
+#include "tiny_math.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,6 +42,9 @@ void base_goto_init(double time_step);
 void base_goto_set_target(double x, double z, double a);
 void base_goto_run();
 bool base_goto_reached();
+
+// Vector2 get_gps_values();
+// double get_compass_angle();
 
 #ifdef __cplusplus
 }
