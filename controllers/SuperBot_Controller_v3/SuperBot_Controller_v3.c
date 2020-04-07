@@ -134,7 +134,7 @@ void init_all()
 }
 
 int keyboard_control(int c){
-// 键盘控制基本运动
+'''键盘控制基本运动'''
   if ((c >= 0)) { //&& c != pc) {//不要求键值变化
     switch (c)
     {
@@ -213,18 +213,18 @@ int keyboard_control(int c){
   return 0;
 }
 
-void BasicMove(double position, double pose, double* dist_sensor){
-// 指定位姿 PTP 局部避障
+void BasicMove(double position, double direction, double* dist_sensor){
+'''用GPS行驶到指定位姿 PTP 局部避障 计算一个瞬时速度'''
 }
 
 int FindEmpty(int state){
-// 寻找空货架 给一个固定的巡逻轨迹 返回货架位置 上下层 商品种类
+'''寻找空货架 给四个定点GPS 摄像头看四面墙 返回货架位置和一个商品种类'''
   return state;
 }
 
 int FindGoods(int state, WbDeviceTag camera, int goods_class){
-  // 前部摄像头寻找指定商品 给一个固定的巡逻轨迹 靠近直到顶部摄像头能捕捉
-  // 下面是demo 看起来一个摄像头就够了
+'''给一个固定的巡逻轨 前部摄像头寻找指定商品 迹 靠近直到顶部摄像头能捕捉'''
+// 下面是demo 看起来一个摄像头就够了
   int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
   printf("\n识别到 %d 个物体.\n", number_of_objects);
   const WbCameraRecognitionObject *objects = wb_camera_recognition_get_objects(camera);
@@ -248,13 +248,12 @@ int FindGoods(int state, WbDeviceTag camera, int goods_class){
 }
 
 int AimandGrasp(int state){
-// 顶部摄像头校准并抓取
+'''前部摄像头校准并抓取'''
   return state;
 }
 
-int ReturnandLoad(int state, double targetplace)
-{
-// 返回货架放置货物 不写导航的话可以手动插补一下 最多插一次就够了
+int ReturnandLoad(int state, double targetplace){
+'''返回货架放置货物 手动插补一下 最多插一次就够了'''
   return state;
 }
 
@@ -264,14 +263,21 @@ int main(int argc, char **argv) {
   // 主状态机
   // 0 寻找空货架
   // 1 寻找商品
-  // 2 抓取
+  // 2 抓取 张学超
   // 3 返回并放置
+
+  //工单
+  //装GPS
+  //装罗盘
   while (true) {
-  // const double force_valueL = wb_touch_sensor_get_value(forceL);
-  // const double force_valueR = wb_touch_sensor_get_value(forceR);
-  // if (force_valueL > 0.01||force_valueR > 0.01) {
-  // printf("Collision of (%g , %g) N\n", force_valueL,force_valueR);
-  // }
+    // const double force_valueL = wb_touch_sensor_get_value(forceL);
+    // const double force_valueR = wb_touch_sensor_get_value(forceR);
+    // if (force_valueL > 0.01||force_valueR > 0.01) {
+    // printf("Collision of (%g , %g) N\n", force_valueL,force_valueR);
+    // }
+    // if(main_state==0){
+    // main_state = FindEmpty(main_state);
+    // } 
     step();
     keyboard_control(wb_keyboard_get_key());
     main_state = FindGoods(main_state, camera[1], 0);
