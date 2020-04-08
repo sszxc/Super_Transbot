@@ -148,7 +148,7 @@ void base_goto_run() {
   double distance = vector2_norm(&v_dir);
 
   // compute absolute angle & delta with the delta with the target angle
-  double theta = vector2_angle(&v_front, &v_north);
+  double theta = vector2_angle(&v_front, &v_north) + M_PI;
   double delta_angle = theta - goto_data.alpha;
 
   // compute the direction vector relatively to the robot coordinates

@@ -59,19 +59,24 @@ double initial_posture[3];//起点位姿,0为x,1为z,2为角度，每段轨迹�
 double tmp_target_posture[3];//临时目标位姿，需要不断计算
 double fin_target_posture[3];//最终目标位姿，
 //定点
+int point_index = 0;//定点编号
+char* point_name[8]=
+{
+  "Right","Right Top","Top","Left Top",
+  "Left","Left Down","Down","Right Down"
+};//定点编号
 double fixed_posture[8][3]=
 {
-{1.05,0.00,0.00},//右
-{1.05,1.05,PI},//右上
-{0.00,1.05,PI/2},//上
-{-1.05,1.05,-PI/2},//左上
-{-1.05,0,-PI},//左
-{-1.05,0,0},//左下
-{-1.05,-1.05,-PI/2},//下
-{1.05,-1.05,PI/2}//右下
+{1.05,0.00,PI*2},//右
+{1.05,-1.05,PI*2},//右上
+{0.00,-1.05,PI/2},//上
+{-1.05,-1.05,PI},//左上
+{-1.05,0,PI},//左
+{-1.05,0,3*PI/2},//左下
+{-1.05,1.05,3*PI/2},//下
+{1.05,1.05,PI*2}//右下
 };
-//定点编号
-int point_index = 0;
+
 double width = 0.0; //抓手目标值
 double height = 0.0;
 
@@ -120,19 +125,24 @@ int main(int argc, char **argv) {
     step();
     if(targetdist_reached(tmp_target_posture,0.1))
     {
-      printf("Arrive !");
-      if(targetdist_reached(fin_target_posture,0.01)&&targetpos_reached(fin_target_posture,0.01))
+
+      if(targetdist_reached(fin_target_posture,0.05)&&targetpos_reached(fin_target_posture,0.05))
       {
         set_posture(initial_posture,gps_values[0],gps_values[1],compass_angle);
         //设置下一个定点位姿
         point_index += 1;
-        set_posture(fin_target_posture,fixed_posture[point_index][0],fixed_posture[point_index][1],fixed_posture[point_index][1]);
-        printf("initial target： %.3f  %.3f  %.3f\n",initial_posture[0],initial_posture[1],initial_posture[2]);
-        printf("final target： %.3f  %.3f  %.3f\n",fin_target_posture[0],fin_target_posture[1],fin_target_posture[2]);
+        point_index %= 8;
+        set_posture(fin_target_posture,fixed_posture[point_index][0],fixed_posture[point_index][1],fixed_posture[point_index][2]);
+        // printf("initial target： %.3f  %.3f  %.3f\n",initial_posture[0],initial_posture[1],initial_posture[2]);
+        // printf("final target： %.3f  %.3f  %.3f\n",fin_target_posture[0],fin_target_posture[1],fin_target_posture[2]);
       }
       caculate_tmp_target(tmp_target_posture);
       base_goto_set_target(tmp_target_posture[0],tmp_target_posture[1],tmp_target_posture[2]);
     }
+    printf("Target:%s\n",point_name[point_index]);
+    printf("initial target： %.3f  %.3f  %.3f\n",initial_posture[0],initial_posture[1],initial_posture[2]);
+    printf("tmp target： %.3f  %.3f  %.3f\n",tmp_target_posture[0],tmp_target_posture[1],tmp_target_posture[2]);
+    printf("final target： %.3f  %.3f  %.3f\n\n",fin_target_posture[0],fin_target_posture[1],fin_target_posture[2]);
     base_goto_run();
     keyboard_control(wb_keyboard_get_key());
     //main_state = FindGoods(main_state, camera[1], 0);
@@ -197,23 +207,26 @@ void init_all(){
   wb_gps_enable(gps, TIME_STEP);
   //Compass初始化
   compass = wb_robot_get_device("compass_copy");
-  wb_compass_enable(compass, TIME_STEP);
-  step();
+  wb_compass_enable(compass, TIME_STEP); 
   //底盘全方位移动初始化
   base_goto_init(TIME_STEP);
   //设置初始位姿
+  step();
   get_gps_values(gps_values);
   get_compass_angle(&compass_angle);
   set_posture(initial_posture,gps_values[0],gps_values[1],compass_angle);
   //设置第一个定点位姿
-  set_posture(fin_target_posture,fixed_posture[point_index][0],fixed_posture[point_index][1],fixed_posture[point_index][1]);
-  printf("initial target： %.3f  %.3f  %.3f\n",initial_posture[0],initial_posture[1],initial_posture[2]);
-  printf("final target： %.3f  %.3f  %.3f\n",fin_target_posture[0],fin_target_posture[1],fin_target_posture[2]);
+  set_posture(fin_target_posture,fixed_posture[point_index][0],fixed_posture[point_index][1],fixed_posture[point_index][2]);
   //计算下一个临时目标;
   caculate_tmp_target(tmp_target_posture);
   //设置底盘运动目标
   base_goto_set_target(tmp_target_posture[0],tmp_target_posture[1],tmp_target_posture[2]);
-  printf("Next target： %.3f  %.3f  %.3f\n",tmp_target_posture[0],tmp_target_posture[1],tmp_target_posture[2]);
+  
+  printf("Target:%s\n",point_name[point_index]);
+  printf("initial target： %.3f  %.3f  %.3f\n",initial_posture[0],initial_posture[1],initial_posture[2]);
+  printf("tmp target： %.3f  %.3f  %.3f\n",tmp_target_posture[0],tmp_target_posture[1],tmp_target_posture[2]);
+  printf("final target： %.3f  %.3f  %.3f\n\n",fin_target_posture[0],fin_target_posture[1],fin_target_posture[2]);
+  
   display_helper_message();
   wb_keyboard_enable(TIME_STEP);
 
@@ -245,18 +258,21 @@ bool targetdist_reached(double target_posture[],double dist_threshold)
 {
   get_gps_values(gps_values);
   double dis = sqrt((gps_values[0]-target_posture[0]) * (gps_values[0]-target_posture[0]) + (gps_values[1]-target_posture[1]) * (gps_values[1]-target_posture[1]));
-  printf("距离目标：%.3f  m\n",dis);
+  
   // double angle = compass_angle - target_posture[2];
   if(dis <= dist_threshold) return true;
-  else return false;
+  else
+  {
+    printf("距离目标位置：%.3f  m\n",dis);
+    return false;
+  }
 }
 bool targetpos_reached(double target_posture[],double pos_threshold)
 {
   get_compass_angle(&compass_angle);
-  double angle = target_posture[2] - pos_threshold;
-  printf("距离目标：%.3f  rad\n",angle);
+  double angle = target_posture[2] - compass_angle;
   if(fabs(angle) <= pos_threshold) return true;
-  else return false;
+  return false;
 
 }
 //获取GPS的值
@@ -274,7 +290,8 @@ void get_compass_angle(double *ret_angle){
   const double *compass_raw_values = wb_compass_get_values(compass);
   const double v_front[2] = {compass_raw_values[0], compass_raw_values[1]};
   const double v_north[2] = {1.0, 0.0};
-  *ret_angle = vector2_angle(v_front, v_north);
+  *ret_angle = vector2_angle(v_front, v_north) + PI;// angle E(0, 2*PI)
+  printf("当前姿态：%.3f  rad\n",*ret_angle);  
 }
 
 //键盘控制基本运动
