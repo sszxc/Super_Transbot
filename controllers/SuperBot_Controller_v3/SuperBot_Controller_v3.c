@@ -464,9 +464,8 @@ int AimandGrasp(int state, WbDeviceTag camera, int objectID)
         double grasp_dis_set = -0.16;
 
         //相对偏移 同时纵向位移稍微削弱一下
-        //方向好像还有反的 Apr.8th bug
         grasp_target_posture[0] = gps_values[0] - sin(compass_angle) * objects[i].position[0] + cos(compass_angle) * (objects[i].position[2] - grasp_dis_set) * 0.6;
-        grasp_target_posture[1] = gps_values[1] + cos(compass_angle) * objects[i].position[0] - sin(compass_angle) * (objects[i].position[2] - grasp_dis_set) * 0.6;
+        grasp_target_posture[1] = gps_values[1] - cos(compass_angle) * objects[i].position[0] - sin(compass_angle) * (objects[i].position[2] - grasp_dis_set) * 0.6;
         grasp_target_posture[2] = compass_angle;
 
         printf("调整到位置： %.3f  %.3f  %.3f\n", grasp_target_posture[0], grasp_target_posture[1], grasp_target_posture[2]);
@@ -489,13 +488,16 @@ int AimandGrasp(int state, WbDeviceTag camera, int objectID)
       {
         printf("当前电机力反馈：%.3f\n", wb_motor_get_force_feedback(gripper_motors[1]));
         //力传感器返回的值不太好 斜着抓效果不行 Apr.8th bug
-        if (wb_motor_get_force_feedback(gripper_motors[1])>-5)
+        if (wb_motor_get_force_feedback(gripper_motors[1])>-8)
           moveFingers(width -= 0.0003);
         else
         {
-          grasp_state += 1;
-          printf("抓紧了\n");
-          wb_robot_step(30000 / TIME_STEP);          
+          wb_robot_step(20000 / TIME_STEP);
+          if (wb_motor_get_force_feedback(gripper_motors[1]) < -8)
+          {
+            grasp_state += 1;
+            printf("抓紧了\n");
+          }                   
         }
       }
       else if (grasp_state == 2) //举
