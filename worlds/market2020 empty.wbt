@@ -45,8 +45,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.06036996712655095 0.9720509018723414 0.2268755412958985 3.9108641511310327
-  position -0.15194973228413838 1.13376923222036 0.03500199011327838
+  orientation 0.09686505182833527 0.9575354728147871 0.27155658717043835 4.01965269640659
+  position -0.8093792860576685 1.817927512254751 -0.23920082028415002
   follow "SuperBot_v3"
   followType "Mounted Shot"
 }
@@ -128,7 +128,7 @@ Solid {
   ]
 }
 BiscuitBox {
-  translation 1.809349999999999 -1.2262861984732587e-05 3.2247200000000005
+  translation 1.24662 -1.22629e-05 0.842473
   rotation 1.4944844752560416e-14 0.9999999999999999 -8.228894027507266e-17 -1.5707953071795857
   name "biscuit box(5)"
   size 0.14 0.18 0.08
@@ -925,7 +925,7 @@ DEF SEU_SuperBot_v2 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.56440014661948e-17 1 3.895080110089917e-16 3.0033622439795424
+      rotation 5.56440014661948e-17 1 3.8950801100899107e-16 3.0033622439795424
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
@@ -980,7 +980,7 @@ DEF SEU_SuperBot_v3 Robot {
       name "compass_copy"
     }
     Camera {
-      translation 0.189524 -1.21685e-06 0.149525
+      translation 0.189449 -7.74385e-05 0.119525
       rotation -0.5773502691896258 0.5773502691896258 0.5773502691896258 -2.09
       children [
         Transform {
@@ -1129,7 +1129,8 @@ DEF SEU_SuperBot_v3 Robot {
             }
           ]
           endPoint DEF LIFT Solid {
-            translation 0 1.0145812428507066e-05 -0.0425
+            translation -1.57351e-09 0.060019 -0.0424968
+            rotation 0.9999999999891928 4.099784187834522e-06 2.192379196546708e-06 4.9312832308997125e-05
             children [
               DEF LEFT_FINGER_SLIDER SliderJoint {
                 jointParameters JointParameters {
@@ -1143,7 +1144,7 @@ DEF SEU_SuperBot_v3 Robot {
                   }
                 ]
                 endPoint DEF LEFT_FINGER Solid {
-                  translation -0.02200000000654654 0 -0.02
+                  translation -0.022000000006546526 0 -0.02
                   children [
                     Group {
                       children [
@@ -1203,7 +1204,7 @@ DEF SEU_SuperBot_v3 Robot {
                   }
                 ]
                 endPoint DEF RIGHT_FINGER Solid {
-                  translation 0.021999999993454776 0 -0.02
+                  translation 0.021999999993454762 0 -0.02
                   children [
                     Group {
                       children [
@@ -1466,28 +1467,28 @@ DEF SEU_SuperBot_v3 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.564400135774801e-17 0.9999999999999999 3.89508011032225e-16 3.0033622434171425
+      rotation 5.564399852069088e-17 0.9999999999999999 3.8950801163992315e-16 3.0033622287042547
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
     }
     DEF WHEEL2 ExteriorWheel {
       translation 0.133 0.163 -0.015
-      rotation -2.3347988182856077e-16 1 -2.334798840720906e-16 1.5882963336216214
+      rotation -2.3347988172827396e-16 1 -2.334798955333778e-16 1.5882962841030877
       anchor 0.133 0.163 -0.015
       name "wheel2"
       sensorName "wheel2sensor"
     }
     DEF WHEEL3 ExteriorWheel {
       translation -0.133 -0.163 -0.015
-      rotation -2.351910932550495e-16 1 -3.135881219611442e-16 1.573543017430948
+      rotation -2.351910952827466e-16 1 -3.1358810790520346e-16 1.5735430687375753
       anchor -0.133 -0.163 -0.015
       name "wheel3"
       sensorName "wheel3sensor"
     }
     DEF WHEEL4 InteriorWheel {
       translation -0.133 0.163 -0.015
-      rotation 0 0.9999999999999999 0 3.0299994185840586
+      rotation 0 1 0 3.0299994747875223
       anchor -0.133 0.163 -0.015
       name "wheel4"
       sensorName "wheel4sensor"
