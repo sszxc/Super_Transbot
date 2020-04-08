@@ -446,7 +446,7 @@ int FindGoods(int state, WbDeviceTag camera, int goods_class)
 //前部摄像头校准并抓取
 int AimandGrasp(int state, WbDeviceTag camera, int objectID)
 {
-  //饼干盒ID43（0 -0.06 随意） 水瓶ID56（0 -0.001 随意） 目标的相对位置
+  //饼干盒ID43 水瓶ID56
   int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
   const WbCameraRecognitionObject *objects = wb_camera_recognition_get_objects(camera);
   for (int i = 0; i < number_of_objects; ++i)
@@ -487,12 +487,11 @@ int AimandGrasp(int state, WbDeviceTag camera, int objectID)
       else if (grasp_state == 1)//抓
       {
         printf("当前电机力反馈：%.3f\n", wb_motor_get_force_feedback(gripper_motors[1]));
-        //力传感器返回的值不太好 斜着抓效果不行 Apr.8th bug
         if (wb_motor_get_force_feedback(gripper_motors[1])>-8)
-          moveFingers(width -= 0.0003);
+          moveFingers(width -= 0.0002);
         else
         {
-          wb_robot_step(20000 / TIME_STEP);
+          wb_robot_step(30000 / TIME_STEP);
           if (wb_motor_get_force_feedback(gripper_motors[1]) < -8)
           {
             grasp_state += 1;

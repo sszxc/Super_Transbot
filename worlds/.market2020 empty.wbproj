@@ -10,5 +10,5 @@ viewpointLocked: 0
 orthographicViewHeight: 1
 textFiles: 1 "libraries/youbot_control/src/base.c" "controllers/SuperBot_Controller_v3/SuperBot_Controller_v3.c"
 globalOptionalRendering: CoordinateSystem::CameraFrustums
-renderingDevicePerspectives: SuperBot_v3:camera_front;1;1;0;0
 renderingDevicePerspectives: SuperBot_v3:camera_top;1;0.992188;0;0.20934
+renderingDevicePerspectives: SuperBot_v3:camera_front;1;1;0;0
