@@ -15,9 +15,9 @@
  */
 
 /*
- * Description:   Starts with a predefined behaviors and then
- *                read the user keyboard inputs to actuate the
- *                robot
+ * SuperBot_Controller
+ * ZXC and YYH
+ * April, 2020
  */
 #include <math.h>
 #include <stdio.h>
@@ -75,7 +75,6 @@ int point_index = 0;
 double width = 0.0; //抓手目标值
 double height = 0.0;
 
-
 static void step();
 static void passive_wait(double sec);
 static void display_helper_message();
@@ -91,7 +90,7 @@ int keyboard_control(int c);
 void BasicMove(double position, double direction, double* dist_sensor);
 int FindEmpty(int state);
 int FindGoods(int state, WbDeviceTag camera, int goods_class);
-int AimandGrasp(int state);
+int AimandGrasp(int state, int objectID);
 int ReturnandLoad(int state, double targetplace);
 bool targetdist_reached(double target_posture[],double dist_threshold);
 bool targetpos_reached(double target_posture[],double pos_threshold);
@@ -166,7 +165,6 @@ static void display_helper_message() {
   printf(" Space: Reset\n");
 }
 
-
 void lift(double position) {
   wb_motor_set_velocity(gripper_motors[0], GRIPPER_MOTOR_MAX_SPEED);
   wb_motor_set_position(gripper_motors[0], position);
@@ -234,6 +232,7 @@ void caculate_tmp_target(double tmp_posture[])
   tmp_posture[1] = gps_values[1] + (fin_target_posture[1] - gps_values[1])/SUB;
   tmp_posture[2] = compass_angle + (fin_target_posture[2] - compass_angle)/(SUB*5);
 }
+
 //设置位姿
 void set_posture(double posture[],double x,double z,double angle)
 {
@@ -241,6 +240,7 @@ void set_posture(double posture[],double x,double z,double angle)
   posture[1] = z;
   posture[2] = angle;
 }
+
 bool targetdist_reached(double target_posture[],double dist_threshold)
 {
   get_gps_values(gps_values);
@@ -250,6 +250,7 @@ bool targetdist_reached(double target_posture[],double dist_threshold)
   if(dis <= dist_threshold) return true;
   else return false;
 }
+
 bool targetpos_reached(double target_posture[],double pos_threshold)
 {
   get_compass_angle(&compass_angle);
@@ -259,6 +260,7 @@ bool targetpos_reached(double target_posture[],double pos_threshold)
   else return false;
 
 }
+
 //获取GPS的值
 void get_gps_values(double v_gps[]){
   const double *gps_raw_values = wb_gps_get_values(gps);  
@@ -269,6 +271,7 @@ void get_gps_values(double v_gps[]){
 double vector2_angle(const double v1[], const double v2[]) {
   return atan2(v2[1], v2[0]) - atan2(v1[1], v1[0]);
 }
+
 //计算罗盘角度
 void get_compass_angle(double *ret_angle){
   const double *compass_raw_values = wb_compass_get_values(compass);
@@ -364,19 +367,20 @@ int keyboard_control(int c){
   }
   return 0;
 }
-//用GPS行驶到指定位姿 PTP 局部避障 计算一个瞬时速度'''
-void BasicMove(double position, double direction, double* dist_sensor){
 
+//用GPS行驶到指定位姿 PTP 局部避障 计算一个瞬时速度
+void BasicMove(double position, double direction, double* dist_sensor){
 }
-//'''寻找空货架 给四个定点GPS 摄像头看四面墙 返回货架位置和一个商品种类'''
+
+//寻找空货架 给四个定点GPS 摄像头看四面墙 返回货架位置和一个商品种类
 int FindEmpty(int state){
 
   return state;
 }
-//'''给一个固定的巡逻轨 前部摄像头寻找指定商品 迹 靠近直到顶部摄像头能捕捉'''
-int FindGoods(int state, WbDeviceTag camera, int goods_class){
 
-// 下面是demo 看起来一个摄像头就够了
+//给一个固定的巡逻轨迹 前部摄像头寻找指定商品 靠近直到顶部摄像头能捕捉
+int FindGoods(int state, WbDeviceTag camera, int goods_class){
+  // 下面是demo 看起来一个摄像头就够了
   int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
   printf("\n识别到 %d 个物体.\n", number_of_objects);
   const WbCameraRecognitionObject *objects = wb_camera_recognition_get_objects(camera);
@@ -398,14 +402,15 @@ int FindGoods(int state, WbDeviceTag camera, int goods_class){
   }
   return state;
 }
-//'''前部摄像头校准并抓取'''
-int AimandGrasp(int state){
 
+//前部摄像头校准并抓取
+int AimandGrasp(int state, int objectID){
+  //饼干盒ID43（0 -0.06 随意） 水瓶ID56（0 -0.001 随意） 目标的相对位置
   return state;
 }
-//'''返回货架放置货物 手动插补一下 最多插一次就够了'''
+
+//返回货架放置货物 手动插补一下 最多插一次就够了
 int ReturnandLoad(int state, double targetplace){
 
   return state;
 }
-
