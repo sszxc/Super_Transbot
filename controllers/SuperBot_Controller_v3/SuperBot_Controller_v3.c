@@ -76,8 +76,8 @@ double fixed_posture[8][3] =
         {1.05, 1.05, PI * 2}       //右下
 };
 
-double width = 0.0; //0~0.1
-double height = 0.0; //-0.05~0.45
+double width = 0.0; //爪子0~0.1
+double height = 0.0; //爪子-0.05~0.45
 int grasp_state = 0;
 
 static void step();
@@ -243,6 +243,10 @@ void init_all()
   gripper_motors[0] = wb_robot_get_device("lift motor");
   gripper_motors[1] = wb_robot_get_device("left finger motor");
   gripper_motors[2] = wb_robot_get_device("right finger motor");
+
+  //电机加力反馈
+  wb_motor_enable_force_feedback(gripper_motors[1], 1);
+  wb_motor_enable_force_feedback(gripper_motors[2], 1);
 }
 
 //细分目标位姿
@@ -447,40 +451,59 @@ int AimandGrasp(int state, WbDeviceTag camera, int objectID)
   const WbCameraRecognitionObject *objects = wb_camera_recognition_get_objects(camera);
   for (int i = 0; i < number_of_objects; ++i)
   {
-    if (objects[i].id==objectID)//找到画面中第一个ID物体
+    if (1 || objects[i].id==objectID)//找到画面中第一个ID物体
     {
       if (grasp_state == 0) //调整位置
       {
-        moveFingers(0.1);
+        lift(0.0);
+        moveFingers(width = 0.1);
         printf("ID %d 的物体 %s 在 %lf %lf\n", objects[i].id, objects[i].model, objects[i].position[0], objects[i].position[2]);
-        printf("物体大小: %lf %lf\n", objects[i].size[0], objects[i].size[1]);
         get_gps_values(gps_values);
         get_compass_angle(&compass_angle);
         double grasp_target_posture[3];
-        double grasp_dis_set = -0.2;
+        double grasp_dis_set = -0.16;
 
-        grasp_target_posture[0] = gps_values[0] - sin(compass_angle) * objects[i].position[0] + cos(compass_angle) * (objects[i].position[2] - grasp_dis_set);
-        grasp_target_posture[1] = gps_values[1] + cos(compass_angle) * objects[i].position[0] - sin(compass_angle) * (objects[i].position[2] - grasp_dis_set);
+        //相对偏移 同时纵向位移稍微削弱一下
+        //方向好像还有反的 Apr.8th bug
+        grasp_target_posture[0] = gps_values[0] - sin(compass_angle) * objects[i].position[0] + cos(compass_angle) * (objects[i].position[2] - grasp_dis_set) * 0.6;
+        grasp_target_posture[1] = gps_values[1] + cos(compass_angle) * objects[i].position[0] - sin(compass_angle) * (objects[i].position[2] - grasp_dis_set) * 0.6;
         grasp_target_posture[2] = compass_angle;
 
         printf("调整到位置： %.3f  %.3f  %.3f\n", grasp_target_posture[0], grasp_target_posture[1], grasp_target_posture[2]);
         printf("当前姿态：%.3f rad\n", compass_angle);
         base_goto_set_target(grasp_target_posture[0], grasp_target_posture[1], grasp_target_posture[2]);
         base_goto_run();
-        double grasp_threshold = 0.05;
+        double grasp_threshold = 0.005;
         if (fabs(objects[i].position[0]) < grasp_threshold && fabs(objects[i].position[2] - grasp_dis_set) < grasp_threshold)
+        {
           grasp_state += 1;
+          printf("对准了\n");
+          base_reset();
+          // 用视觉先来个抓手基本值
+          // printf("物体大小: %lf %lf\n", objects[i].size[0], objects[i].size[1]);
+          moveFingers(width = objects[i].size[0] / 2.0);
+          wb_robot_step(30000 / TIME_STEP);
+        }
       }
       else if (grasp_state == 1)//抓
       {
-        base_reset();
-        moveFingers(0.05);
-        printf("抓到了\n");
+        printf("当前电机力反馈：%.3f\n", wb_motor_get_force_feedback(gripper_motors[1]));
+        //力传感器返回的值不太好 斜着抓效果不行 Apr.8th bug
+        if (wb_motor_get_force_feedback(gripper_motors[1])>-5)
+          moveFingers(width -= 0.0003);
+        else
+        {
+          grasp_state += 1;
+          printf("抓紧了\n");
+          wb_robot_step(30000 / TIME_STEP);          
+        }
       }
       else if (grasp_state == 2) //举
-      {        
-        state += 1;
-        grasp_state = 0;
+      {
+        // printf("举起了\n");
+        lift(0.3);
+        // state += 1;
+        // grasp_state = 0;
         //结束
       }
       break;
