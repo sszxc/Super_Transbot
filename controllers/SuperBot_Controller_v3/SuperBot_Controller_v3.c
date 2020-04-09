@@ -1,20 +1,4 @@
 /*
- * Copyright 1996-2020 Cyberbotics Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/*
  * SuperBot_Controller
  * ZXC and YYH
  * April, 2020
@@ -65,7 +49,7 @@ char *point_name[8] =
         "Right", "Right Top", "Top", "Left Top",
         "Left", "Left Down", "Down", "Right Down"}; //定点编号
 double fixed_posture[8][3] =
-    {
+{
         {1.05, 0.00, PI * 2},      //右
         {1.05, -1.05, PI * 2},     //右上
         {0.00, -1.05, PI / 2},     //上
@@ -78,7 +62,8 @@ double fixed_posture[8][3] =
 
 double width = 0.0; //爪子0~0.1
 double height = 0.0; //爪子-0.05~0.45
-int grasp_state = 0;
+
+
 
 static void step();
 static void passive_wait(double sec);
@@ -86,30 +71,37 @@ static void display_helper_message();
 void lift(double position);
 void moveFingers(double position);
 void init_all();
-void caculate_tmp_target();
+void caculate_tmp_target(double tmp_posture[],double fin_posture[]);
 void set_posture(double posture[], double x, double z, double angle);
 void get_gps_values(double v_gps[]);
 double vector2_angle(const double v1[], const double v2[]);
 void get_compass_angle(double *ret_angle);
 int keyboard_control(int c);
-void BasicMove(double position, double direction, double *dist_sensor);
-int FindEmpty(int state);
-int FindGoods(int state, WbDeviceTag camera, int goods_class);
-int AimandGrasp(int state, WbDeviceTag camera, int objectID);
-int ReturnandLoad(int state, double targetplace);
 bool targetdist_reached(double target_posture[], double dist_threshold);
 bool targetpos_reached(double target_posture[], double pos_threshold);
+
+
+void Find_Empty(int *main_state);
+void Find_Goods(int *main_state, WbDeviceTag camera, int goods_class);
+void Aim_and_Grasp(int *main_state,int *grasp_state,WbDeviceTag camera, int objectID);
+void Return_and_Load(int *main_state, double targetplace);
+bool Moveto_CertainPoint(int *main_state,double fin_posture[]);
+
+//*?                 main函数      <开始>            ?*//
+//主函数
 
 int main(int argc, char **argv)
 {
   init_all();
-  int main_state = 2;
+  
   // 主状态机
   // 0 寻找空货架
   // 1 寻找商品
   // 2 抓取
   // 3 返回并放置
   printf("Ready to go!\n");
+  int main_state = 0;//机器人运行状态
+  int grasp_state = 0;//手爪状态
   while (true)
   {
     // const double force_valueL = wb_touch_sensor_get_value(forceL);
@@ -120,84 +112,35 @@ int main(int argc, char **argv)
 
     step();
 
-    if(main_state==0){
-      if (targetdist_reached(tmp_target_posture, 0.1))
+    if(main_state==0)
+    {
+      if(Moveto_CertainPoint(&main_state,fin_target_posture))
       {
-        if (targetdist_reached(fin_target_posture, 0.05) && targetpos_reached(fin_target_posture, 0.05))
-        {
-          set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
-          //设置下一个定点位姿
-          point_index += 1;
-          point_index %= 8;
-          set_posture(fin_target_posture, fixed_posture[point_index][0], fixed_posture[point_index][1], fixed_posture[point_index][2]);
-          // printf("initial target： %.3f  %.3f  %.3f\n",initial_posture[0],initial_posture[1],initial_posture[2]);
-          // printf("final target： %.3f  %.3f  %.3f\n",fin_target_posture[0],fin_target_posture[1],fin_target_posture[2]);
-        }
-        caculate_tmp_target(tmp_target_posture);
-        base_goto_set_target(tmp_target_posture[0], tmp_target_posture[1], tmp_target_posture[2]);
+        set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
+        point_index += 1;
+        point_index %= 8;
+        set_posture(fin_target_posture, fixed_posture[point_index][0], fixed_posture[point_index][1], fixed_posture[point_index][2]);
       }
-      printf("Target:%s\n", point_name[point_index]);
-      printf("initial target： %.3f  %.3f  %.3f\n", initial_posture[0], initial_posture[1], initial_posture[2]);
-      printf("tmp target： %.3f  %.3f  %.3f\n", tmp_target_posture[0], tmp_target_posture[1], tmp_target_posture[2]);
-      printf("final target： %.3f  %.3f  %.3f\n\n", fin_target_posture[0], fin_target_posture[1], fin_target_posture[2]);
-      base_goto_run();
-      keyboard_control(wb_keyboard_get_key());
     }
     else if (main_state == 2)
     {
-      main_state = AimandGrasp(main_state, camera[1], 43);
-      // main_state = FindGoods(main_state, camera[1], 0);
-      keyboard_control(wb_keyboard_get_key());
+      Aim_and_Grasp(&main_state,&grasp_state,camera[1], 43);
+      if(grasp_state == 2)
+      {
+         set_posture(fin_target_posture, fixed_posture[point_index][0], fixed_posture[point_index][1], fixed_posture[point_index][2]);
+      }
     }
+    keyboard_control(wb_keyboard_get_key());
   }
 
   wb_robot_cleanup();
 
   return 0;
 }
+//*?                 main函数       <结束>            ?*//
 
-static void step()
-{
-  if (wb_robot_step(TIME_STEP) == -1)
-  {
-    wb_robot_cleanup();
-    exit(EXIT_SUCCESS);
-  }
-}
-
-static void passive_wait(double sec)
-{
-  double start_time = wb_robot_get_time();
-  do
-  {
-    step();
-  } while (start_time + sec > wb_robot_get_time());
-}
-
-static void display_helper_message()
-{
-  printf("Control commands:\n");
-  printf(" Arrows:       Move the robot\n");
-  printf(" Page Up/Down: Rotate the robot\n");
-  printf(" +/-:          (Un)grip\n");
-  printf(" Shift + arrows:   Handle the arm\n");
-  printf(" Space: Reset\n");
-}
-
-void lift(double position)
-{
-  wb_motor_set_velocity(gripper_motors[0], GRIPPER_MOTOR_MAX_SPEED);
-  wb_motor_set_position(gripper_motors[0], position);
-}
-
-void moveFingers(double position)
-{
-  wb_motor_set_velocity(gripper_motors[1], GRIPPER_MOTOR_MAX_SPEED);
-  wb_motor_set_velocity(gripper_motors[2], GRIPPER_MOTOR_MAX_SPEED);
-  wb_motor_set_position(gripper_motors[1], position);
-  wb_motor_set_position(gripper_motors[2], position);
-}
-
+//*?                 核心控制函数    <开始>            ?*//
+//各模块初始化
 void init_all()
 {
   // 机器人初始化
@@ -228,14 +171,9 @@ void init_all()
   //设置第一个定点位姿
   set_posture(fin_target_posture, fixed_posture[point_index][0], fixed_posture[point_index][1], fixed_posture[point_index][2]);
   //计算下一个临时目标;
-  caculate_tmp_target(tmp_target_posture);
+  caculate_tmp_target(tmp_target_posture,fin_target_posture);
   //设置底盘运动目标
   base_goto_set_target(tmp_target_posture[0], tmp_target_posture[1], tmp_target_posture[2]);
-
-  printf("Target:%s\n", point_name[point_index]);
-  printf("initial target： %.3f  %.3f  %.3f\n", initial_posture[0], initial_posture[1], initial_posture[2]);
-  printf("tmp target： %.3f  %.3f  %.3f\n", tmp_target_posture[0], tmp_target_posture[1], tmp_target_posture[2]);
-  printf("final target： %.3f  %.3f  %.3f\n\n", fin_target_posture[0], fin_target_posture[1], fin_target_posture[2]);
 
   display_helper_message();
   wb_keyboard_enable(TIME_STEP);
@@ -247,72 +185,6 @@ void init_all()
   //电机加力反馈
   wb_motor_enable_force_feedback(gripper_motors[1], 1);
   wb_motor_enable_force_feedback(gripper_motors[2], 1);
-}
-
-//细分目标位姿
-double SUB = 2.0; //细分目标份数
-void caculate_tmp_target(double tmp_posture[])
-{
-  get_gps_values(gps_values);
-  get_compass_angle(&compass_angle);
-  tmp_posture[0] = gps_values[0] + (fin_target_posture[0] - gps_values[0]) / SUB;
-  tmp_posture[1] = gps_values[1] + (fin_target_posture[1] - gps_values[1]) / SUB;
-  tmp_posture[2] = compass_angle + (fin_target_posture[2] - compass_angle) / (SUB * 5);
-}
-
-//设置位姿
-void set_posture(double posture[], double x, double z, double angle)
-{
-  posture[0] = x;
-  posture[1] = z;
-  posture[2] = angle;
-}
-
-bool targetdist_reached(double target_posture[], double dist_threshold)
-{
-  get_gps_values(gps_values);
-  double dis = sqrt((gps_values[0] - target_posture[0]) * (gps_values[0] - target_posture[0]) + (gps_values[1] - target_posture[1]) * (gps_values[1] - target_posture[1]));
-
-  // double angle = compass_angle - target_posture[2];
-  if (dis <= dist_threshold)
-    return true;
-  else
-  {
-    printf("距离目标位置：%.3f  m\n", dis);
-    return false;
-  }
-}
-
-bool targetpos_reached(double target_posture[], double pos_threshold)
-{
-  get_compass_angle(&compass_angle);
-  double angle = target_posture[2] - compass_angle;
-  if (fabs(angle) <= pos_threshold)
-    return true;
-  return false;
-}
-
-//获取GPS的值
-void get_gps_values(double v_gps[])
-{
-  const double *gps_raw_values = wb_gps_get_values(gps);
-  v_gps[0] = gps_raw_values[0];
-  v_gps[1] = gps_raw_values[2];
-}
-
-double vector2_angle(const double v1[], const double v2[])
-{
-  return atan2(v2[1], v2[0]) - atan2(v1[1], v1[0]);
-}
-
-//计算罗盘角度
-void get_compass_angle(double *ret_angle)
-{
-  const double *compass_raw_values = wb_compass_get_values(compass);
-  const double v_front[2] = {compass_raw_values[0], compass_raw_values[1]};
-  const double v_north[2] = {1.0, 0.0};
-  *ret_angle = vector2_angle(v_front, v_north) + PI; // angle E(0, 2*PI)
-  // printf("当前姿态：%.3f  rad\n", *ret_angle);
 }
 
 //键盘控制基本运动
@@ -404,20 +276,107 @@ int keyboard_control(int c)
   return 0;
 }
 
-//用GPS行驶到指定位姿 PTP 局部避障 计算一个瞬时速度
-void BasicMove(double position, double direction, double *dist_sensor)
+//GPS运动到指定位姿，返回bool值反馈是否到达
+bool Moveto_CertainPoint(int *main_state,double fin_posture[])
 {
+  if (targetdist_reached(fin_posture, 0.05) && targetpos_reached(fin_posture, 0.05))
+  {
+    return true;
+  }
+  else
+  {
+    caculate_tmp_target(tmp_target_posture,fin_posture);
+    // if (targetdist_reached(tmp_target_posture, 0.1))
+    // {
+    //     base_goto_set_target(tmp_target_posture[0], tmp_target_posture[1], tmp_target_posture[2]);
+    // }
+    base_goto_set_target(tmp_target_posture[0], tmp_target_posture[1], tmp_target_posture[2]);
+    printf("Target:%s\n", point_name[point_index]);
+    printf("initial target： %.3f  %.3f  %.3f\n", initial_posture[0], initial_posture[1], initial_posture[2]);
+    printf("tmp target： %.3f  %.3f  %.3f\n", tmp_target_posture[0], tmp_target_posture[1], tmp_target_posture[2]);
+    printf("final target： %.3f  %.3f  %.3f\n\n", fin_posture[0], fin_posture[1], fin_posture[2]);
+    base_goto_run();
+    return false;
+  }
+  
+}
+
+//前部摄像头校准并抓取
+void Aim_and_Grasp(int *main_state,int *grasp_state,WbDeviceTag camera, int objectID)
+{
+  //饼干盒ID43 水瓶ID56
+  int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
+  const WbCameraRecognitionObject *objects = wb_camera_recognition_get_objects(camera);
+  for (int i = 0; i < number_of_objects; ++i)
+  {
+    if (1 || objects[i].id==objectID)//找到画面中第一个ID物体
+    {
+      if (*grasp_state == 0) //调整位置
+      {
+        lift(0.0);
+        moveFingers(width = 0.1);
+        printf("ID %d 的物体 %s 在 %lf %lf\n", objects[i].id, objects[i].model, objects[i].position[0], objects[i].position[2]);
+        get_gps_values(gps_values);
+        get_compass_angle(&compass_angle);
+        double grasp_target_posture[3];
+        double grasp_dis_set = -0.16;
+
+        //相对偏移 同时纵向位移稍微削弱一下
+        grasp_target_posture[0] = gps_values[0] - sin(compass_angle) * objects[i].position[0] + cos(compass_angle) * (objects[i].position[2] - grasp_dis_set) * 0.6;
+        grasp_target_posture[1] = gps_values[1] - cos(compass_angle) * objects[i].position[0] - sin(compass_angle) * (objects[i].position[2] - grasp_dis_set) * 0.6;
+        grasp_target_posture[2] = compass_angle;
+
+        set_posture(fin_target_posture, grasp_target_posture[0], grasp_target_posture[1], grasp_target_posture[2]);
+        Moveto_CertainPoint(main_state,fin_target_posture);
+
+        double grasp_threshold = 0.005;
+        if (fabs(objects[i].position[0]) < grasp_threshold && fabs(objects[i].position[2] - grasp_dis_set) < grasp_threshold)
+        {
+          *grasp_state += 1;
+          printf("对准了\n");
+          base_reset();
+          // 用视觉先来个抓手基本值
+          // printf("物体大小: %lf %lf\n", objects[i].size[0], objects[i].size[1]);
+          moveFingers(width = objects[i].size[0] / 2.0);
+          wb_robot_step(30000 / TIME_STEP);
+        }
+      }
+      else if (*grasp_state == 1)//抓
+      {
+        printf("当前电机力反馈：%.3f\n", wb_motor_get_force_feedback(gripper_motors[1]));
+        if (wb_motor_get_force_feedback(gripper_motors[1])>-8)
+          moveFingers(width -= 0.0004);//步进
+        else
+        {
+          printf("抓紧了\n");
+          wb_robot_step(50000 / TIME_STEP);//等他抓稳定
+          if (wb_motor_get_force_feedback(gripper_motors[1]) < -8)
+          {
+            *grasp_state += 1;            
+            lift(height = 0.3);
+            printf("举起了\n");
+          }                   
+        }
+      }
+      else if (*grasp_state == 2) //举
+      {
+        // state += 1;
+        // grasp_state = 0;
+        *main_state = 0;
+        //结束
+      }
+      break;
+    }
+  }
 }
 
 //寻找空货架 给四个定点GPS 摄像头看四面墙 返回货架位置和一个商品种类
-int FindEmpty(int state)
+void Find_Empty(int *main_state)
 {
-
-  return state;
 }
 
 //给一个固定的巡逻轨迹 前部摄像头寻找指定商品 靠近直到顶部摄像头能捕捉
-int FindGoods(int state, WbDeviceTag camera, int goods_class)
+void Find_Goods(int *main_state, WbDeviceTag camera, int goods_class)
 {
   // 下面是demo 看起来一个摄像头就够了
   int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
@@ -439,82 +398,130 @@ int FindGoods(int state, WbDeviceTag camera, int goods_class)
       printf("颜色 %d/%d: %lf %lf %lf\n", j + 1, objects[i].number_of_colors, objects[i].colors[3 * j],
              objects[i].colors[3 * j + 1], objects[i].colors[3 * j + 2]);
   }
-  return state;
-}
-
-//前部摄像头校准并抓取
-int AimandGrasp(int state, WbDeviceTag camera, int objectID)
-{
-  //饼干盒ID43 水瓶ID56
-  int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
-  const WbCameraRecognitionObject *objects = wb_camera_recognition_get_objects(camera);
-  for (int i = 0; i < number_of_objects; ++i)
-  {
-    if (1 || objects[i].id==objectID)//找到画面中第一个ID物体
-    {
-      if (grasp_state == 0) //调整位置
-      {
-        lift(0.0);
-        moveFingers(width = 0.1);
-        printf("ID %d 的物体 %s 在 %lf %lf\n", objects[i].id, objects[i].model, objects[i].position[0], objects[i].position[2]);
-        get_gps_values(gps_values);
-        get_compass_angle(&compass_angle);
-        double grasp_target_posture[3];
-        double grasp_dis_set = -0.16;
-
-        //相对偏移 同时纵向位移稍微削弱一下
-        grasp_target_posture[0] = gps_values[0] - sin(compass_angle) * objects[i].position[0] + cos(compass_angle) * (objects[i].position[2] - grasp_dis_set) * 0.6;
-        grasp_target_posture[1] = gps_values[1] - cos(compass_angle) * objects[i].position[0] - sin(compass_angle) * (objects[i].position[2] - grasp_dis_set) * 0.6;
-        grasp_target_posture[2] = compass_angle;
-
-        printf("调整到位置： %.3f  %.3f  %.3f\n", grasp_target_posture[0], grasp_target_posture[1], grasp_target_posture[2]);
-        printf("当前姿态：%.3f rad\n", compass_angle);
-        base_goto_set_target(grasp_target_posture[0], grasp_target_posture[1], grasp_target_posture[2]);
-        base_goto_run();
-        double grasp_threshold = 0.005;
-        if (fabs(objects[i].position[0]) < grasp_threshold && fabs(objects[i].position[2] - grasp_dis_set) < grasp_threshold)
-        {
-          grasp_state += 1;
-          printf("对准了\n");
-          base_reset();
-          // 用视觉先来个抓手基本值
-          // printf("物体大小: %lf %lf\n", objects[i].size[0], objects[i].size[1]);
-          moveFingers(width = objects[i].size[0] / 2.0);
-          wb_robot_step(30000 / TIME_STEP);
-        }
-      }
-      else if (grasp_state == 1)//抓
-      {
-        printf("当前电机力反馈：%.3f\n", wb_motor_get_force_feedback(gripper_motors[1]));
-        if (wb_motor_get_force_feedback(gripper_motors[1])>-8)
-          moveFingers(width -= 0.0004);//步进
-        else
-        {
-          printf("抓紧了\n");
-          wb_robot_step(50000 / TIME_STEP);//等他抓稳定
-          if (wb_motor_get_force_feedback(gripper_motors[1]) < -8)
-          {
-            grasp_state += 1;            
-            lift(height = 0.3);
-            printf("举起了\n");
-          }                   
-        }
-      }
-      else if (grasp_state == 2) //举
-      {
-        // state += 1;
-        // grasp_state = 0;
-        //结束
-      }
-      break;
-    }
-  }
-  return state;
 }
 
 //返回货架放置货物 手动插补一下 最多插一次就够了
-int ReturnandLoad(int state, double targetplace)
+void Return_and_Load(int *main_state, double targetplace)
 {
 
-  return state;
 }
+//*?                 核心控制函数    <结束>               ?*//
+
+//*?                 功能函数        <开始>               ?*//
+//仿真前进 1 step
+static void step()
+{
+  if (wb_robot_step(TIME_STEP) == -1)
+  {
+    wb_robot_cleanup();
+    exit(EXIT_SUCCESS);
+  }
+}
+
+//软件仿真延时
+static void passive_wait(double sec)
+{
+  double start_time = wb_robot_get_time();
+  do
+  {
+    step();
+  } while (start_time + sec > wb_robot_get_time());
+}
+
+//打印帮助
+static void display_helper_message()
+{
+  printf("Control commands:\n");
+  printf(" Arrows:       Move the robot\n");
+  printf(" Page Up/Down: Rotate the robot\n");
+  printf(" +/-:          (Un)grip\n");
+  printf(" Shift + arrows:   Handle the arm\n");
+  printf(" Space: Reset\n");
+}
+
+//设置机械臂上升高度
+void lift(double position)
+{
+  wb_motor_set_velocity(gripper_motors[0], GRIPPER_MOTOR_MAX_SPEED);
+  wb_motor_set_position(gripper_motors[0], position);
+}
+
+//设置手爪开合大小
+void moveFingers(double position)
+{
+  wb_motor_set_velocity(gripper_motors[1], GRIPPER_MOTOR_MAX_SPEED);
+  wb_motor_set_velocity(gripper_motors[2], GRIPPER_MOTOR_MAX_SPEED);
+  wb_motor_set_position(gripper_motors[1], position);
+  wb_motor_set_position(gripper_motors[2], position);
+}
+
+//细分目标位姿
+double SUB = 2.0; //细分目标份数
+void caculate_tmp_target(double tmp_posture[],double fin_posture[])
+{
+  get_gps_values(gps_values);
+  get_compass_angle(&compass_angle);
+  tmp_posture[0] = gps_values[0] + (fin_posture[0] - gps_values[0]) / SUB;
+  tmp_posture[1] = gps_values[1] + (fin_posture[1] - gps_values[1]) / SUB;
+  tmp_posture[2] = compass_angle + (fin_posture[2] - compass_angle) / (SUB * 5);
+}
+
+//设置位姿
+void set_posture(double posture[], double x, double z, double angle)
+{
+  posture[0] = x;
+  posture[1] = z;
+  posture[2] = angle;
+}
+
+//bool函数 返回是否到达指定位置
+bool targetdist_reached(double target_posture[], double dist_threshold)
+{
+  get_gps_values(gps_values);
+  double dis = sqrt((gps_values[0] - target_posture[0]) * (gps_values[0] - target_posture[0]) + (gps_values[1] - target_posture[1]) * (gps_values[1] - target_posture[1]));
+
+  // double angle = compass_angle - target_posture[2];
+  if (dis <= dist_threshold)
+    return true;
+  else
+  {
+    printf("距离目标位置：%.3f  m\n", dis);
+    return false;
+  }
+}
+
+//bool函数 返回是否到达指定姿态
+bool targetpos_reached(double target_posture[], double pos_threshold)
+{
+  get_compass_angle(&compass_angle);
+  double angle = target_posture[2] - compass_angle;
+  if (fabs(angle) <= pos_threshold || fabs(angle) >= 2*PI - pos_threshold)
+    return true;
+  return false;
+}
+
+//获取GPS的值
+void get_gps_values(double v_gps[])
+{
+  const double *gps_raw_values = wb_gps_get_values(gps);
+  v_gps[0] = gps_raw_values[0];
+  v_gps[1] = gps_raw_values[2];
+}
+
+//数学函数，返回arctan值
+double vector2_angle(const double v1[], const double v2[])
+{
+  return atan2(v2[1], v2[0]) - atan2(v1[1], v1[0]);
+}
+
+//计算罗盘角度
+void get_compass_angle(double *ret_angle)
+{
+  const double *compass_raw_values = wb_compass_get_values(compass);
+  const double v_front[2] = {compass_raw_values[0], compass_raw_values[1]};
+  const double v_north[2] = {1.0, 0.0};
+  *ret_angle = vector2_angle(v_front, v_north) + PI; // angle E(0, 2*PI)
+  // printf("当前姿态：%.3f  rad\n", *ret_angle);
+}
+
+//*?                 功能函数        <结束>               ?*//

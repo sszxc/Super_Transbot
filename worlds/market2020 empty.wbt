@@ -45,8 +45,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.21946137273420363 0.8309652612221782 0.5112078251744353 3.9409305240715593
-  position 0.4749181635459856 1.9439337826325764 0.7006764792982784
+  orientation 0.09492252920472874 0.9627311670292775 0.2532556287228832 4.071499667066901
+  position -2.766265773508482 2.7864086904852345 -1.5390659914288345
   follow "SuperBot_v3"
   followType "Mounted Shot"
 }
@@ -142,7 +142,7 @@ Solid {
       appearance PBRAppearance {
         baseColorMap ImageTexture {
           url [
-            "C:/Users/Henry/AppData/Local/Programs/Webots/projects/objects/drinks/protos/textures/evian.png"
+            "F:/Webots2020/Webots/projects/objects/drinks/protos/textures/evian.png"
           ]
         }
         roughness 0.15
