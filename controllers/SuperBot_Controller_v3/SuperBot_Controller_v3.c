@@ -375,27 +375,26 @@ int keyboard_control(int c)
     case WB_KEYBOARD_UP | WB_KEYBOARD_SHIFT:
       //UpDownControll(Target_Height+=0.02);
       lift(height += 0.005);
-      printf("Increase arm height\n");
+      printf("Increase arm height to %.3f\n", height);
       break;
     case 326:
     case WB_KEYBOARD_DOWN | WB_KEYBOARD_SHIFT:
-
       //UpDownControll(Target_Height-=0.02);
       lift(height -= 0.005);
-      printf("Decrease arm height\n");
+      printf("Decrease arm height to %.3f\n", height);
       // arm_decrease_height();
       break;
     case 330:
     case WB_KEYBOARD_RIGHT | WB_KEYBOARD_SHIFT:
-      printf("Close the Claws\n");
       //ClawControll(Target_Width-=0.01);
       moveFingers(width -= 0.001);
+      printf("Close the Claws to %.3f\n", width);
       break;
     case 328:
     case WB_KEYBOARD_LEFT | WB_KEYBOARD_SHIFT:
-      printf("Open the Claws\n");
       //ClawControll(Target_Width+=0.01);
       moveFingers(width += 0.001);
+      printf("Open the Claws to %.3f\n", width);
       break;
     default:
       fprintf(stderr, "Wrong keyboard input\n");
@@ -488,21 +487,21 @@ int AimandGrasp(int state, WbDeviceTag camera, int objectID)
       {
         printf("当前电机力反馈：%.3f\n", wb_motor_get_force_feedback(gripper_motors[1]));
         if (wb_motor_get_force_feedback(gripper_motors[1])>-8)
-          moveFingers(width -= 0.0002);
+          moveFingers(width -= 0.0004);//步进
         else
         {
-          wb_robot_step(30000 / TIME_STEP);
+          printf("抓紧了\n");
+          wb_robot_step(50000 / TIME_STEP);//等他抓稳定
           if (wb_motor_get_force_feedback(gripper_motors[1]) < -8)
           {
-            grasp_state += 1;
-            printf("抓紧了\n");
+            grasp_state += 1;            
+            lift(height = 0.3);
+            printf("举起了\n");
           }                   
         }
       }
       else if (grasp_state == 2) //举
       {
-        // printf("举起了\n");
-        lift(0.3);
         // state += 1;
         // grasp_state = 0;
         //结束
