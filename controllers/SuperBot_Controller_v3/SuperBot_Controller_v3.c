@@ -100,7 +100,7 @@ int main(int argc, char **argv)
   // 2 抓取
   // 3 返回并放置
   printf("Ready to go!\n");
-  int main_state = 0;//机器人运行状态
+  int main_state = 2;//机器人运行状态
   int grasp_state = 0;//手爪状态
   while (true)
   {
@@ -463,7 +463,15 @@ void caculate_tmp_target(double tmp_posture[],double fin_posture[])
   get_compass_angle(&compass_angle);
   tmp_posture[0] = gps_values[0] + (fin_posture[0] - gps_values[0]) / SUB;
   tmp_posture[1] = gps_values[1] + (fin_posture[1] - gps_values[1]) / SUB;
-  tmp_posture[2] = compass_angle + (fin_posture[2] - compass_angle) / (SUB * 5);
+  //选择所需旋转角度最小的的方向进行旋转
+  if(fabs(fin_posture[2] - compass_angle) > PI)
+  {
+    tmp_posture[2] = compass_angle + (compass_angle - fin_posture[2]) / (SUB * 5);
+  }
+  else
+    tmp_posture[2] = compass_angle + (fin_posture[2] - compass_angle) / (SUB * 5);
+
+
 }
 
 //设置位姿
