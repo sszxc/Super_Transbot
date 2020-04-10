@@ -3942,11 +3942,7 @@ DEF SEU_SuperBot_v2 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-<<<<<<< HEAD
       rotation 5.56440014661948e-17 1 3.8950801100898984e-16 3.0033622439795424
-=======
-      rotation 5.56440014661948e-17 1 3.895080110089904e-16 3.0033622439795424
->>>>>>> 28e1bc7bdb72d2ffbc0bae2ef2b23f399f795ee0
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"

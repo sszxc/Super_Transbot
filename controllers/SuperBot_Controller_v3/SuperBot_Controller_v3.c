@@ -43,34 +43,31 @@ double initial_posture[3];    //起点位姿,0为x,1为z,2为角度，每段轨�
 double tmp_target_posture[3]; //临时目标位姿，需要不断计算
 double fin_target_posture[3]; //最终目标位姿，
 
-
-
-
 //寻找货物定点 右->...-> 上->...->左->...->下
 int Travel_Point_Index = 0; //定点编号
 double fixed_posture_travelaround[12][3] =
-{
+    {
         {1.05, 0.00, PI * 2},      //右
         {1.05, -1.05, PI * 2},     //右上
         {1.05, -1.05, PI / 2},     //右上 转
         {0.00, -1.05, PI / 2},     //上
-        {-1.05, -1.05,PI / 2},     //左上
+        {-1.05, -1.05, PI / 2},    //左上
         {-1.05, -1.05, PI},        //左上 转
         {-1.05, 0, PI},            //左
-        {-1.05, 1.05, PI},         //左下 
+        {-1.05, 1.05, PI},         //左下
         {-1.05, 1.05, 3 * PI / 2}, //左下 转
         {0.00, 1.05, 3 * PI / 2},  //下
         {1.05, 1.05, 3 * PI / 2},  //右下
         {1.05, 1.05, PI * 2}       //右下 转
 };
 //识别空货架定点 右->上->左->下
-int FindEmpty_Point_Index = 0;//定点编号
+int FindEmpty_Point_Index = 0; //定点编号
 double fixed_posture_findempty[4][3] =
-{
-  {1.05, 0.00, PI},      //右
-  {0.00, -1.05, 3 * PI / 2},     //上
-  {-1.05, 0, 0},            //左
-  {-1.05, 1.05, PI / 2} //下
+    {
+        {1.05, 0.00, PI},          //右
+        {0.00, -1.05, 3 * PI / 2}, //上
+        {-1.05, 0, 0},             //左
+        {-1.05, 1.05, PI / 2}      //下
 };
 
 //机器人状态枚举
@@ -84,10 +81,8 @@ enum RobotState
   TurnBack_To_LoadItem,
   Item_Loading
 };
-double width = 0.0; //爪子0~0.1
+double width = 0.0;  //爪子0~0.1
 double height = 0.0; //爪子-0.05~0.45
-
-
 
 static void step();
 static void passive_wait(double sec);
@@ -95,7 +90,7 @@ static void display_helper_message();
 void lift(double position);
 void moveFingers(double position);
 void init_all();
-void caculate_tmp_target(double tmp_posture[],double fin_posture[]);
+void caculate_tmp_target(double tmp_posture[], double fin_posture[]);
 void set_posture(double posture[], double x, double z, double angle);
 void get_gps_values(double v_gps[]);
 double vector2_angle(const double v1[], const double v2[]);
@@ -104,13 +99,12 @@ int keyboard_control(int c);
 bool targetdist_reached(double target_posture[], double dist_threshold);
 bool targetpos_reached(double target_posture[], double pos_threshold);
 
-
-void Find_Empty();
+void Find_Empty(WbDeviceTag camera, int goods_class);
 void Find_Goods(WbDeviceTag camera, int goods_class);
-bool Aim_and_Grasp(int *grasp_state,WbDeviceTag camera, int objectID);
+bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID);
 void Return_and_Load(double targetplace);
 bool Moveto_CertainPoint(double fin_posture[]);
-void Robot_State_Machine(int *main_state,int *grasp_state);
+void Robot_State_Machine(int *main_state, int *grasp_state);
 
 //*?                 main函数      <开始>            ?*//
 //主函数
@@ -118,19 +112,15 @@ void Robot_State_Machine(int *main_state,int *grasp_state);
 int main(int argc, char **argv)
 {
   init_all();
-  
-  // 主状态机
-  // 0 寻找空货架
-  // 1 寻找商品
-  // 2 抓取
-  // 3 返回并放置
+
   printf("Ready to go!\n");
-  int main_state = 0;//机器人运行状态
-  int grasp_state = 0;//手爪状态
+  int main_state = 0;  //机器人运行状态
+  int grasp_state = 0; //手爪状态
   while (true)
   {
     step();
-    Robot_State_Machine(&main_state,&grasp_state);
+    Robot_State_Machine(&main_state, &grasp_state);
+    // printf("State:%d\n", main_state);
     keyboard_control(wb_keyboard_get_key());
   }
 
@@ -172,7 +162,7 @@ void init_all()
   //设置第一个定点位姿
   set_posture(fin_target_posture, fixed_posture_findempty[FindEmpty_Point_Index][0], fixed_posture_findempty[FindEmpty_Point_Index][1], fixed_posture_findempty[FindEmpty_Point_Index][2]);
   //计算下一个临时目标;
-  caculate_tmp_target(tmp_target_posture,fin_target_posture);
+  caculate_tmp_target(tmp_target_posture, fin_target_posture);
   //设置底盘运动目标
   base_goto_set_target(tmp_target_posture[0], tmp_target_posture[1], tmp_target_posture[2]);
 
@@ -189,122 +179,123 @@ void init_all()
 }
 
 //机器人状态机
-void Robot_State_Machine(int *main_state,int *grasp_state)
+void Robot_State_Machine(int *main_state, int *grasp_state)
 {
-  switch(*main_state) 
+  switch (*main_state)
   {
-    //初始工作状态，站在四个定点之一，准备识别空货架
-    case Init_Pose:
-    {  
-      if(Moveto_CertainPoint(fin_target_posture))
-      {
-        *main_state = Recognize_Empty;
-      }
-      break;
-    }
-    //识别空货架
-    case Recognize_Empty:
+  //初始工作状态，站在四个定点之一，准备识别空货架
+  case Init_Pose:
+  {
+    if (Moveto_CertainPoint(fin_target_posture))
     {
-      int Empty_Flag = 1;
-      //TODO ...这里写识别空货架
+      *main_state = Recognize_Empty;
+      printf("Ready for scanningscanning!/n");
+    }
+    break;
+  }
+  //识别空货架
+  case Recognize_Empty:
+  {
+    int Empty_Flag = 1;
+    //TODO ...这里写识别空货架
+    Empty_Flag = 0;
+    printf("Ready for scanning!/n");
+    Find_Empty(camera[1], 43);
 
-     if(Empty_Flag)//这里写识别结束标志位
-     {
+    if (Empty_Flag) //这里写识别结束标志位
+    {
       *main_state = Arround_Moving;
       set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
-      set_posture(fin_target_posture,fixed_posture_travelaround[Travel_Point_Index][0], fixed_posture_travelaround[Travel_Point_Index][1], fixed_posture_travelaround[Travel_Point_Index][2]);
-     }
-      break;
+      set_posture(fin_target_posture, fixed_posture_travelaround[Travel_Point_Index][0], fixed_posture_travelaround[Travel_Point_Index][1], fixed_posture_travelaround[Travel_Point_Index][2]);
     }
-    //做环绕运动
-    case Arround_Moving:
+    break;
+  }
+  //做环绕运动
+  case Arround_Moving:
+  {
+    int Found_Item_Flag = 0;
+    //TODO ...这里写识别待抓取物体 比如正好面对时物品
+
+    if (Found_Item_Flag)
     {
-      int Found_Item_Flag = 0;
-      //TODO ...这里写识别待抓取物体 比如正好面对时物品
-      
-      if(Found_Item_Flag)
-      {
-        *main_state = Grab_Item;
-      }
-      else
-      {
-        if(Moveto_CertainPoint(fin_target_posture))
-        {
-          *main_state = Recognize_Empty;
-          set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
-          Travel_Point_Index += 1;
-          Travel_Point_Index %= 12;
-          set_posture(fin_target_posture, fixed_posture_travelaround[Travel_Point_Index][0], fixed_posture_travelaround[Travel_Point_Index][1], fixed_posture_travelaround[Travel_Point_Index][2]);
-        }
-      }
-      break;
+      *main_state = Grab_Item;
     }
-    //抓物品
-    case Grab_Item:
+    else
     {
-      if(Aim_and_Grasp(grasp_state,camera[1], 43))
+      if (Moveto_CertainPoint(fin_target_posture))
       {
-        *main_state = Back_Moving;
-      }
-      break;
-    }
-    //取货回程
-    case Back_Moving:
-    {
-      int Shelf_Arriving_Flag = 0;
-       //TODO ...这里写到达指定目标货架
-      if(Shelf_Arriving_Flag)
-      {
-        *main_state = TurnBack_To_LoadItem;
+        *main_state = Recognize_Empty;
         set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
-        set_posture(fin_target_posture,fixed_posture_findempty[FindEmpty_Point_Index][0], fixed_posture_findempty[FindEmpty_Point_Index][1], fixed_posture_findempty[FindEmpty_Point_Index][2]);
-      }
-      else
-      {
-        //TODO 这里还要处理往哪边近绕圈的问题
-        if(Moveto_CertainPoint(fin_target_posture))
-        {
-          set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
-          Travel_Point_Index += 1;
-          Travel_Point_Index %= 12;
-          set_posture(fin_target_posture, fixed_posture_travelaround[Travel_Point_Index][0], fixed_posture_travelaround[Travel_Point_Index][1], fixed_posture_travelaround[Travel_Point_Index][2]);
-        }
-      }
-      
-    }
-    //转身准备上货动作
-    case TurnBack_To_LoadItem:
-    {
-      if(Moveto_CertainPoint( fin_target_posture))
-      {
-        *main_state = Item_Loading;
+        Travel_Point_Index += 1;
+        Travel_Point_Index %= 12;
+        set_posture(fin_target_posture, fixed_posture_travelaround[Travel_Point_Index][0], fixed_posture_travelaround[Travel_Point_Index][1], fixed_posture_travelaround[Travel_Point_Index][2]);
       }
     }
-    //上货
-    case Item_Loading:
+    break;
+  }
+  //抓物品
+  case Grab_Item:
+  {
+    if (Aim_and_Grasp(grasp_state, camera[1], 43))
     {
-      int Item_Load_Finished = 0;
+      *main_state = Back_Moving;
+    }
+    break;
+  }
+  //取货回程
+  case Back_Moving:
+  {
+    int Shelf_Arriving_Flag = 0;
+    //TODO ...这里写到达指定目标货架
+    if (Shelf_Arriving_Flag)
+    {
+      *main_state = TurnBack_To_LoadItem;
+      set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
+      set_posture(fin_target_posture, fixed_posture_findempty[FindEmpty_Point_Index][0], fixed_posture_findempty[FindEmpty_Point_Index][1], fixed_posture_findempty[FindEmpty_Point_Index][2]);
+    }
+    else
+    {
+      //TODO 这里还要处理往哪边近绕圈的问题
+      if (Moveto_CertainPoint(fin_target_posture))
+      {
+        set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
+        Travel_Point_Index += 1;
+        Travel_Point_Index %= 12;
+        set_posture(fin_target_posture, fixed_posture_travelaround[Travel_Point_Index][0], fixed_posture_travelaround[Travel_Point_Index][1], fixed_posture_travelaround[Travel_Point_Index][2]);
+      }
+    }
+  }
+  //转身准备上货动作
+  case TurnBack_To_LoadItem:
+  {
+    if (Moveto_CertainPoint(fin_target_posture))
+    {
+      *main_state = Item_Loading;
+    }
+  }
+  //上货
+  case Item_Loading:
+  {
+    int Item_Load_Finished = 0;
 
-      //TODO 这里写上货
+    //TODO 这里写上货
 
-      if(Item_Load_Finished)
-      {
-         *main_state = Init_Pose;
-         set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
-         set_posture(fin_target_posture,fixed_posture_findempty[FindEmpty_Point_Index][0], fixed_posture_findempty[FindEmpty_Point_Index][1], fixed_posture_findempty[FindEmpty_Point_Index][2]);
-      }
-    }
-    //ERROR
-    default:
+    if (Item_Load_Finished)
     {
-      printf("Error form State Machine !!!/n");
-      break;
+      *main_state = Init_Pose;
+      set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
+      set_posture(fin_target_posture, fixed_posture_findempty[FindEmpty_Point_Index][0], fixed_posture_findempty[FindEmpty_Point_Index][1], fixed_posture_findempty[FindEmpty_Point_Index][2]);
     }
-      
+  }
+  //ERROR
+  default:
+  {
+    printf("Error form State Machine !!!/n");
+    break;
+  }
   }
 }
-    
-  
+
 //键盘控制基本运动
 int keyboard_control(int c)
 {
@@ -399,31 +390,34 @@ bool Moveto_CertainPoint(double fin_posture[])
 {
   if (targetdist_reached(fin_posture, 0.05) && targetpos_reached(fin_posture, 0.05))
   {
+    printf("到达目标位置！\n");
+    base_reset();
     return true;
   }
   else
   {
-    caculate_tmp_target(tmp_target_posture,fin_posture);
+    caculate_tmp_target(tmp_target_posture, fin_posture);
     base_goto_set_target(tmp_target_posture[0], tmp_target_posture[1], tmp_target_posture[2]);
     // printf("Target:%s\n", point_name[point_index]);
-    printf("initial target： %.3f  %.3f  %.3f\n", initial_posture[0], initial_posture[1], initial_posture[2]);
-    printf("tmp target： %.3f  %.3f  %.3f\n", tmp_target_posture[0], tmp_target_posture[1], tmp_target_posture[2]);
-    printf("final target： %.3f  %.3f  %.3f\n\n", fin_posture[0], fin_posture[1], fin_posture[2]);
+
+    // printf("initial target： %.3f  %.3f  %.3f\n", initial_posture[0], initial_posture[1], initial_posture[2]);
+    // printf("tmp target： %.3f  %.3f  %.3f\n", tmp_target_posture[0], tmp_target_posture[1], tmp_target_posture[2]);
+    // printf("final target： %.3f  %.3f  %.3f\n\n", fin_posture[0], fin_posture[1], fin_posture[2]);
+   
     base_goto_run();
     return false;
   }
-  
 }
 
 //前部摄像头校准并抓取
-bool Aim_and_Grasp(int *grasp_state,WbDeviceTag camera, int objectID)
+bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID)
 {
   //饼干盒ID43 水瓶ID56
   int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
   const WbCameraRecognitionObject *objects = wb_camera_recognition_get_objects(camera);
   for (int i = 0; i < number_of_objects; ++i)
   {
-    if (1 || objects[i].id==objectID)//找到画面中第一个ID物体
+    if (1 || objects[i].id == objectID) //找到画面中第一个ID物体
     {
       if (*grasp_state == 0) //调整位置
       {
@@ -455,21 +449,21 @@ bool Aim_and_Grasp(int *grasp_state,WbDeviceTag camera, int objectID)
           wb_robot_step(30000 / TIME_STEP);
         }
       }
-      else if (*grasp_state == 1)//抓
+      else if (*grasp_state == 1) //抓
       {
         printf("当前电机力反馈：%.3f\n", wb_motor_get_force_feedback(gripper_motors[1]));
-        if (wb_motor_get_force_feedback(gripper_motors[1])>-8)
-          moveFingers(width -= 0.0004);//步进
+        if (wb_motor_get_force_feedback(gripper_motors[1]) > -8)
+          moveFingers(width -= 0.0004); //步进
         else
         {
           printf("抓紧了\n");
-          wb_robot_step(50000 / TIME_STEP);//等他抓稳定
+          wb_robot_step(50000 / TIME_STEP); //等他抓稳定
           if (wb_motor_get_force_feedback(gripper_motors[1]) < -8)
           {
-            *grasp_state += 1;            
+            *grasp_state += 1;
             lift(height = 0.3);
             printf("举起了\n");
-          }                   
+          }
         }
       }
       else if (*grasp_state == 2) //举
@@ -483,12 +477,7 @@ bool Aim_and_Grasp(int *grasp_state,WbDeviceTag camera, int objectID)
 }
 
 //寻找空货架 给四个定点GPS 摄像头看四面墙 返回货架位置和一个商品种类
-void Find_Empty()
-{
-}
-
-//给一个固定的巡逻轨迹 前部摄像头寻找指定商品 靠近直到顶部摄像头能捕捉
-void Find_Goods(WbDeviceTag camera, int goods_class)
+void Find_Empty(WbDeviceTag camera, int goods_class)
 {
   // 下面是demo 看起来一个摄像头就够了
   int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
@@ -500,22 +489,27 @@ void Find_Goods(WbDeviceTag camera, int goods_class)
     printf("物体 %d 的ID: %d\n", i, objects[i].id);
     printf("物体 %d 的相对位置: %lf %lf %lf\n", i, objects[i].position[0], objects[i].position[1],
            objects[i].position[2]);
-    printf("物体 %d 的相对姿态: %lf %lf %lf %lf\n", i, objects[i].orientation[0], objects[i].orientation[1],
-           objects[i].orientation[2], objects[i].orientation[3]);
-    printf("物体的大小 %d: %lf %lf\n", i, objects[i].size[0], objects[i].size[1]);
+    // printf("物体 %d 的相对姿态: %lf %lf %lf %lf\n", i, objects[i].orientation[0], objects[i].orientation[1],
+    //        objects[i].orientation[2], objects[i].orientation[3]);
+    // printf("物体的大小 %d: %lf %lf\n", i, objects[i].size[0], objects[i].size[1]);
     printf("物体 %d 在图像中的坐标: %d %d\n", i, objects[i].position_on_image[0],
            objects[i].position_on_image[1]);
-    printf("物体 %d 在图像中的大小: %d %d\n", i, objects[i].size_on_image[0], objects[i].size_on_image[1]);
-    for (int j = 0; j < objects[i].number_of_colors; ++j)
-      printf("颜色 %d/%d: %lf %lf %lf\n", j + 1, objects[i].number_of_colors, objects[i].colors[3 * j],
-             objects[i].colors[3 * j + 1], objects[i].colors[3 * j + 2]);
+    // printf("物体 %d 在图像中的大小: %d %d\n", i, objects[i].size_on_image[0], objects[i].size_on_image[1]);
+    // for (int j = 0; j < objects[i].number_of_colors; ++j)
+    //   printf("颜色 %d/%d: %lf %lf %lf\n", j + 1, objects[i].number_of_colors, objects[i].colors[3 * j],
+    //          objects[i].colors[3 * j + 1], objects[i].colors[3 * j + 2]);
   }
 }
 
-//返回货架放置货物 手动插补一下 最多插一次就够了
-void Return_and_Load( double targetplace)
+//给一个固定的巡逻轨迹 前部摄像头寻找指定商品 靠近直到顶部摄像头能捕捉
+void Find_Goods(WbDeviceTag camera, int goods_class)
 {
 
+}
+
+//返回货架放置货物 手动插补一下 最多插一次就够了
+void Return_and_Load(double targetplace)
+{
 }
 //*?                 核心控制函数    <结束>               ?*//
 
@@ -569,21 +563,19 @@ void moveFingers(double position)
 
 //细分目标位姿
 double SUB = 2.0; //细分目标份数
-void caculate_tmp_target(double tmp_posture[],double fin_posture[])
+void caculate_tmp_target(double tmp_posture[], double fin_posture[])
 {
   get_gps_values(gps_values);
   get_compass_angle(&compass_angle);
   tmp_posture[0] = gps_values[0] + (fin_posture[0] - gps_values[0]) / SUB;
   tmp_posture[1] = gps_values[1] + (fin_posture[1] - gps_values[1]) / SUB;
   //选择所需旋转角度最小的的方向进行旋转
-  if(fabs(fin_posture[2] - compass_angle) > PI)
+  if (fabs(fin_posture[2] - compass_angle) > PI)
   {
     tmp_posture[2] = compass_angle + (compass_angle - fin_posture[2]) / (SUB * 5);
   }
   else
     tmp_posture[2] = compass_angle + (fin_posture[2] - compass_angle) / (SUB * 5);
-
-
 }
 
 //设置位姿
@@ -602,10 +594,12 @@ bool targetdist_reached(double target_posture[], double dist_threshold)
 
   // double angle = compass_angle - target_posture[2];
   if (dis <= dist_threshold)
+  {
     return true;
+  }
   else
   {
-    printf("距离目标位置：%.3f  m\n", dis);
+    // printf("距离目标位置：%.3f  m\n", dis);
     return false;
   }
 }
@@ -615,7 +609,7 @@ bool targetpos_reached(double target_posture[], double pos_threshold)
 {
   get_compass_angle(&compass_angle);
   double angle = target_posture[2] - compass_angle;
-  if (fabs(angle) <= pos_threshold || fabs(angle) >= 2*PI - pos_threshold)
+  if (fabs(angle) <= pos_threshold || fabs(angle) >= 2 * PI - pos_threshold)
     return true;
   return false;
 }
