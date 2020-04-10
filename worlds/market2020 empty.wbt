@@ -45,8 +45,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.09492252920472874 0.9627311670292775 0.2532556287228832 4.071499667066901
-  position -2.766265773508482 2.7864086904852345 -1.5390659914288345
+  orientation 0.4145742537388813 0.8242294433882998 0.38571234461534065 4.751199598358168
+  position -2.606771113491646 4.038671966271562 1.76525279055915
   follow "SuperBot_v3"
   followType "Mounted Shot"
 }
@@ -128,14 +128,14 @@ Solid {
   ]
 }
 BiscuitBox {
-  translation 1.24662 -1.22629e-05 0.842473
+  translation 2.82048 -1.22629e-05 1.72135
   rotation 1.17692e-14 1 -3.22312e-15 -2.094395307179586
   name "biscuit box(5)"
   size 0.14 0.18 0.08
   mass 0.5
 }
 Solid {
-  translation 1.05004 -0.00202453 -0.40578
+  translation 2.72541 -0.00202453 2.14561
   rotation -3.5409053437686457e-16 1 -8.766158780699667e-18 -0.261795307179586
   children [
     Shape {
@@ -925,7 +925,7 @@ DEF SEU_SuperBot_v2 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.56440014661948e-17 1 3.8950801100899043e-16 3.0033622439795424
+      rotation 5.56440014661948e-17 1 3.895080110089904e-16 3.0033622439795424
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
@@ -1467,7 +1467,7 @@ DEF SEU_SuperBot_v3 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.564399852069088e-17 0.9999999999999999 3.895080116399238e-16 3.0033622287042547
+      rotation 5.564399852069088e-17 0.9999999999999999 3.8950801163992384e-16 3.0033622287042547
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
