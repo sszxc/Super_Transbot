@@ -4005,7 +4005,7 @@ DEF SEU_SuperBot_v3 Robot {
           children [
             Shape {
               appearance PBRAppearance {
-                baseColor 0 0.5 1
+                baseColor 0.611765 0.611765 0.611765
                 roughness 1
                 metalness 0
               }
@@ -4033,18 +4033,17 @@ DEF SEU_SuperBot_v3 Robot {
       rotation 0.5763732843333687 0.5793012857777945 0.576371284332382 2.09586
       children [
         Transform {
-          translation 0 0 0.015
+          translation 0 0.005 -0.015
           rotation 1 0 0 1.57
           children [
             Shape {
               appearance PBRAppearance {
-                baseColor 0 1 0.5
+                baseColor 0.223529 0.223529 0.223529
                 roughness 1
                 metalness 0
               }
-              geometry Cylinder {
-                height 0.03
-                radius 0.02
+              geometry Box {
+                size 0.025 0.02 0.05
               }
             }
           ]
