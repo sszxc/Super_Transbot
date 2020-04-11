@@ -5,6 +5,7 @@
  */
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <string.h>
 #include <base.h>
@@ -43,8 +44,10 @@ double initial_posture[3];    //起点位姿,0为x,1为z,2为角度，每段轨�
 double tmp_target_posture[3]; //临时目标位姿，需要不断计算
 double fin_target_posture[3]; //最终目标位姿
 int CurrentShelf = 0;         //当前货架编号 起点出发 逆时针
-char *GoodsonShelf[4][16];    //货架上的物品ID号 先下后上 先左后右
+int GoodsonShelf[4][16]; //货架上的物品ID号 先下后上 先左后右
 int TargetIndex = 0;          //当前关注的货架空位
+int TargetGood;             //当前关注的货物种类
+char *GoodsList[] = {"can", "cereal box", "jam jar", "honey jar", "water bottle"};
 
 //寻找货物定点 右->...-> 上->...->左->...->下
 int Travel_Point_Index = 0; //定点编号
@@ -106,8 +109,10 @@ void get_compass_angle(double *ret_angle);
 int keyboard_control(int c);
 bool targetdist_reached(double target_posture[], double dist_threshold);
 bool targetpos_reached(double target_posture[], double pos_threshold);
+int name2index(char *name);
+char *index2name(int index);
 
-void Find_Empty(WbDeviceTag camera, int CurrentShelf);
+bool Find_Empty(WbDeviceTag camera);
 void Find_Goods(WbDeviceTag camera, int goods_class);
 bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID);
 void Return_and_Load(double targetplace);
@@ -184,6 +189,10 @@ void init_all()
   //电机加力反馈
   wb_motor_enable_force_feedback(gripper_motors[1], 1);
   wb_motor_enable_force_feedback(gripper_motors[2], 1);
+
+  for (int i = 0; i < 4;i++)
+    for (int j = 0; j < 16;j++)
+      GoodsonShelf[i][j] = -1;//不知道为啥写在定义的时候不成功
 }
 
 //机器人状态机
@@ -205,52 +214,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
   //识别空货架
   case Recognize_Empty:
   {
-    int Empty_Flag = 0;
-    // printf("Scanning!\n");
-    Find_Empty(camera[0], CurrentShelf); //用后置摄像头
-
-    for (int j = 0; j < 16; j++)
-      printf("GoodsonShelf[%d][%d] = %s\n", CurrentShelf, j, GoodsonShelf[CurrentShelf][j]);
-    for (int j = 0; j < 16; j++)
-    {
-      // if (strlen(GoodsonShelf[CurrentShelf][j]) == 0) // 这种判断可能会crash
-      //   Empty_Flag = 1;
-      if (GoodsonShelf[CurrentShelf][j] == NULL)
-      {
-        Empty_Flag = 1;
-        TargetIndex = j;
-        //寻找邻近货物 判断应该取的货物类型
-        //直接覆盖 假装已经放上去了
-        int TargetFloor = 0;
-        if(j>7)
-          TargetFloor += 8; //层数无关
-        if (j % 8 < 4)
-          for (int k = 0; k < 8;k++)
-          {
-            if (GoodsonShelf[CurrentShelf][TargetFloor+k] != NULL)
-              {
-                GoodsonShelf[CurrentShelf][j] = GoodsonShelf[CurrentShelf][TargetFloor + k];
-                break;
-              }
-          }
-        else
-          for (int k = 7; k >= 0; k--)
-          {
-            if (GoodsonShelf[CurrentShelf][TargetFloor + k] != NULL)
-            {
-              GoodsonShelf[CurrentShelf][j] = GoodsonShelf[CurrentShelf][TargetFloor + k];
-              break;
-            }
-          }
-        //如果整排都没有可能会出错 下次一定
-        printf("GoodsonShelf[%d][%d] need %s\n", CurrentShelf, j, GoodsonShelf[CurrentShelf][j]);
-        break;
-      }        
-    }
-
-    *main_state = -1;//stop
-
-    if (Empty_Flag) //货架上有空位
+    if (Find_Empty(camera[0])) //货架上有空位
     {      
       *main_state = Arround_Moving;
       set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
@@ -266,6 +230,8 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
   {
     int Found_Item_Flag = 0;
     //TODO ...这里写识别待抓取物体 比如正好面对时物品
+
+    printf("GoodsonShelf[%d][%d] need %s\n", CurrentShelf, TargetIndex, index2name(TargetGood));
 
     if (Found_Item_Flag)
     {
@@ -531,7 +497,7 @@ bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID)
 }
 
 //寻找空货架 给四个定点GPS 摄像头看四面墙 返回货架位置和一个商品种类
-void Find_Empty(WbDeviceTag camera, int CurrentShelf)
+bool Find_Empty(WbDeviceTag camera)
 {
   int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
   // printf("识别到 %d 个物体.\n", number_of_objects);
@@ -556,8 +522,57 @@ void Find_Empty(WbDeviceTag camera, int CurrentShelf)
     int Shelfx = floor((objects[i].position[0] + 0.84) * 4.17 + 0.5); //左右 平均间隔0.24（架子宽度0.25）右移后对应一个系数 四舍五入
     int Shelfy = (objects[i].position[1] < -0.22) ? 0 : 1;             //上下层 -0.22为上下分界
 
-    GoodsonShelf[CurrentShelf][Shelfy * 8 + Shelfx] = objects[i].model;
+    GoodsonShelf[CurrentShelf][Shelfy * 8 + Shelfx] = name2index(objects[i].model);
+    printf("物体 %s 对应序号 %d 写入 %d\n", objects[i].model, name2index(objects[i].model), GoodsonShelf[CurrentShelf][Shelfy * 8 + Shelfx]);
   }
+
+  //检测完毕 判断下一个要取的货物类型
+  int Empty_Flag = 0;
+
+  for (int j = 0; j < 16; j++)
+    printf("GoodsonShelf[%d][%d] = %d\n", CurrentShelf, j, GoodsonShelf[CurrentShelf][j]);
+  for (int j = 0; j < 16; j++)
+  {
+    // if (strlen(GoodsonShelf[CurrentShelf][j]) == 0) // 这种判断可能会crash
+    //   Empty_Flag = 1;
+    if (GoodsonShelf[CurrentShelf][j] == -1)
+    {
+      Empty_Flag = 1;
+      TargetIndex = j;
+      //寻找邻近货物 判断应该取的货物类型
+      //直接覆盖 假装已经放上去了
+      int TargetFloor = 0;
+      if (j > 7)
+        TargetFloor += 8; //层数无关
+      if (j % 8 < 4)
+        for (int k = 0; k < 8; k++)//从左往右
+        {
+          if (GoodsonShelf[CurrentShelf][TargetFloor + k] != -1)
+          {
+            // strcpy(TargetGood, GoodsonShelf[CurrentShelf][TargetFloor + k]);
+            TargetGood = GoodsonShelf[CurrentShelf][TargetFloor + k];
+            break;
+          }
+        }
+      else
+        for (int k = 7; k >= 0; k--)//从右往左
+        {
+          if (GoodsonShelf[CurrentShelf][TargetFloor + k] != -1)
+          {
+            // strcpy(TargetGood, GoodsonShelf[CurrentShelf][TargetFloor + k]);
+            TargetGood = GoodsonShelf[CurrentShelf][TargetFloor + k];
+            break;
+          }
+        }
+      //如果整排都没有可能会出错 下次一定
+      printf("GoodsonShelf[%d][%d] need %s\n", CurrentShelf, j, index2name(TargetGood));
+      break;
+    }
+  }
+  if (Empty_Flag)
+    return true;
+  else
+    return false;
 }
 
 //给一个固定的巡逻轨迹 前部摄像头寻找指定商品 靠近直到顶部摄像头能捕捉
@@ -695,6 +710,25 @@ void get_compass_angle(double *ret_angle)
   const double v_north[2] = {1.0, 0.0};
   *ret_angle = vector2_angle(v_front, v_north) + PI; // angle E(0, 2*PI)
   // printf("当前姿态：%.3f  rad\n", *ret_angle);
+}
+
+//商品名转换
+int name2index(char *name)
+{
+  for (int i = 0; i < sizeof(GoodsList);i++)
+  {
+    // printf(" %s : %s \n", name, GoodsList[i]);
+    // if (name==GoodsList[i])
+    if(strcmp(name, GoodsList[i]) == 0)
+      return i;
+  }
+  return -1;
+}
+
+//商品名转换
+char *index2name(int index)
+{
+  return GoodsList[index];
 }
 
 //*?                 功能函数        <结束>               ?*//
