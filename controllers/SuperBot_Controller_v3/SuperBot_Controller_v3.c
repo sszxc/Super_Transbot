@@ -42,7 +42,9 @@ double compass_angle;         //罗盘角度
 double initial_posture[3];    //起点位姿,0为x,1为z,2为角度，每段轨迹只设置一次
 double tmp_target_posture[3]; //临时目标位姿，需要不断计算
 double fin_target_posture[3]; //最终目标位姿
-int GoodsonShelf[4][16];    //货架上的物品ID号 起点出发 逆时针
+int CurrentShelf = 0;         //当前货架编号 起点出发 逆时针
+char *GoodsonShelf[4][16];    //货架上的物品ID号 先下后上 先左后右
+int TargetIndex = 0;          //当前关注的货架空位
 
 //寻找货物定点 右->...-> 上->...->左->...->下
 int Travel_Point_Index = 0; //定点编号
@@ -105,7 +107,7 @@ int keyboard_control(int c);
 bool targetdist_reached(double target_posture[], double dist_threshold);
 bool targetpos_reached(double target_posture[], double pos_threshold);
 
-void Find_Empty(WbDeviceTag camera, int goods_class);
+void Find_Empty(WbDeviceTag camera, int CurrentShelf);
 void Find_Goods(WbDeviceTag camera, int goods_class);
 bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID);
 void Return_and_Load(double targetplace);
@@ -192,28 +194,70 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
   //初始工作状态，站在四个定点之一，准备识别空货架
   case Init_Pose:
   {
+    //TODO 确定一下当前货架
+    //CurrentShelf = 0;
     if (Moveto_CertainPoint(fin_target_posture, 0.01))
     {
       *main_state = Recognize_Empty;
-      printf("Ready for scanningscanning!/n");
     }
     break;
   }
   //识别空货架
   case Recognize_Empty:
   {
-    int Empty_Flag = 1;
-    //TODO ...这里写识别空货架
-    Empty_Flag = 0;
-    printf("Ready for scanning!/n");
-    Find_Empty(camera[0], 43);//用后置摄像头
-    *main_state = -1;
+    int Empty_Flag = 0;
+    // printf("Scanning!\n");
+    Find_Empty(camera[0], CurrentShelf); //用后置摄像头
 
-    if (Empty_Flag) //这里写识别结束标志位
+    for (int j = 0; j < 16; j++)
+      printf("GoodsonShelf[%d][%d] = %s\n", CurrentShelf, j, GoodsonShelf[CurrentShelf][j]);
+    for (int j = 0; j < 16; j++)
     {
+      // if (strlen(GoodsonShelf[CurrentShelf][j]) == 0) // 这种判断可能会crash
+      //   Empty_Flag = 1;
+      if (GoodsonShelf[CurrentShelf][j] == NULL)
+      {
+        Empty_Flag = 1;
+        TargetIndex = j;
+        //寻找邻近货物 判断应该取的货物类型
+        //直接覆盖 假装已经放上去了
+        int TargetFloor = 0;
+        if(j>7)
+          TargetFloor += 8; //层数无关
+        if (j % 8 < 4)
+          for (int k = 0; k < 8;k++)
+          {
+            if (GoodsonShelf[CurrentShelf][TargetFloor+k] != NULL)
+              {
+                GoodsonShelf[CurrentShelf][j] = GoodsonShelf[CurrentShelf][TargetFloor + k];
+                break;
+              }
+          }
+        else
+          for (int k = 7; k >= 0; k--)
+          {
+            if (GoodsonShelf[CurrentShelf][TargetFloor + k] != NULL)
+            {
+              GoodsonShelf[CurrentShelf][j] = GoodsonShelf[CurrentShelf][TargetFloor + k];
+              break;
+            }
+          }
+        //如果整排都没有可能会出错 下次一定
+        printf("GoodsonShelf[%d][%d] need %s\n", CurrentShelf, j, GoodsonShelf[CurrentShelf][j]);
+        break;
+      }        
+    }
+
+    *main_state = -1;//stop
+
+    if (Empty_Flag) //货架上有空位
+    {      
       *main_state = Arround_Moving;
       set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
       set_posture(fin_target_posture, fixed_posture_travelaround[Travel_Point_Index][0], fixed_posture_travelaround[Travel_Point_Index][1], fixed_posture_travelaround[Travel_Point_Index][2]);
+    }
+    else //货架上无空位
+    {
     }
     break;
   }
@@ -231,7 +275,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
     {
       if (Moveto_CertainPoint(fin_target_posture, 0.05))
       {
-        *main_state = Recognize_Empty;
+        // *main_state = Recognize_Empty;
         set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
         Travel_Point_Index += 1;
         Travel_Point_Index %= 12;
@@ -290,6 +334,9 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
     if (Item_Load_Finished)
     {
       *main_state = Init_Pose;
+      //判断当前货架存储的数组中是否已经填满
+      //CurrentShelf+1或者回到Arround_Moving
+      //当然对抗的时候不用这一步 直接回去扫描
       set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
       set_posture(fin_target_posture, fixed_posture_findempty[FindEmpty_Point_Index][0], fixed_posture_findempty[FindEmpty_Point_Index][1], fixed_posture_findempty[FindEmpty_Point_Index][2]);
     }
@@ -484,18 +531,18 @@ bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID)
 }
 
 //寻找空货架 给四个定点GPS 摄像头看四面墙 返回货架位置和一个商品种类
-void Find_Empty(WbDeviceTag camera, int goods_class)
+void Find_Empty(WbDeviceTag camera, int CurrentShelf)
 {
-  // 下面是demo 看起来一个摄像头就够了
   int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
-  printf("\n识别到 %d 个物体.\n", number_of_objects);
+  // printf("识别到 %d 个物体.\n", number_of_objects);
   const WbCameraRecognitionObject *objects = wb_camera_recognition_get_objects(camera);
   for (int i = 0; i < number_of_objects; ++i)
   {
-    // printf("物体 %d 的类型: %s\n", i, objects[i].model);
-    printf("物体 %d 的ID: %d ", i, objects[i].id);
-    printf("物体 %d 的相对位置: %lf %lf %lf\n", i, objects[i].position[0], objects[i].position[1],
-           objects[i].position[2]);
+    // printf("物体 %d 的类型: %s ", i, objects[i].model);
+    // printf("ID: %d ", objects[i].id);
+    // printf("相对位置: %lf %lf %lf ", objects[i].position[0], objects[i].position[1],
+    //        objects[i].position[2]);
+
     // printf("物体 %d 的相对姿态: %lf %lf %lf %lf\n", i, objects[i].orientation[0], objects[i].orientation[1],
     //        objects[i].orientation[2], objects[i].orientation[3]);
     // printf("物体的大小 %d: %lf %lf\n", i, objects[i].size[0], objects[i].size[1]);
@@ -504,7 +551,12 @@ void Find_Empty(WbDeviceTag camera, int goods_class)
     // printf("物体 %d 在图像中的大小: %d %d\n", i, objects[i].size_on_image[0], objects[i].size_on_image[1]);
     // for (int j = 0; j < objects[i].number_of_colors; ++j)
     //   printf("颜色 %d/%d: %lf %lf %lf\n", j + 1, objects[i].number_of_colors, objects[i].colors[3 * j],
-    //          objects[i].colors[3 * j + 1], objects[i].colors[3 * j + 2]);
+    //           objects[i].colors[3 * j + 1], objects[i].colors[3 * j + 2]);
+
+    int Shelfx = floor((objects[i].position[0] + 0.84) * 4.17 + 0.5); //左右 平均间隔0.24（架子宽度0.25）右移后对应一个系数 四舍五入
+    int Shelfy = (objects[i].position[1] < -0.22) ? 0 : 1;             //上下层 -0.22为上下分界
+
+    GoodsonShelf[CurrentShelf][Shelfy * 8 + Shelfx] = objects[i].model;
   }
 }
 

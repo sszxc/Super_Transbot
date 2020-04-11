@@ -45,8 +45,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.17851250244801983 -0.9415049713550042 -0.2858350492566621 1.8640582760500115
-  position -2.1765153881208867 2.402220251679303 0.17358425296367036
+  orientation -0.13881825386793262 -0.9563806276126713 -0.257032269414273 1.9494834789888158
+  position -2.185779751441256 2.1889987779938256 -0.0696690989646751
   follow "SuperBot_v3"
 }
 Background {
@@ -4033,12 +4033,12 @@ DEF SEU_SuperBot_v3 Robot {
       rotation 0.5763732843333687 0.5793012857777945 0.576371284332382 2.09586
       children [
         Transform {
-          translation 0 0.005 -0.015
+          translation 0 0.005 2.1684e-19
           rotation 1 0 0 1.57
           children [
             Shape {
               appearance PBRAppearance {
-                baseColor 0.223529 0.223529 0.223529
+                baseColor 0.611765 0.611765 0.611765
                 roughness 1
                 metalness 0
               }
