@@ -45,10 +45,9 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.9976641754858083 0.055226971738688006 -0.04020167340790894 0.967992132758067
-  position 0.42706948782316984 5.862042812958594 3.8556220656201554
+  orientation -0.17851250244801983 -0.9415049713550042 -0.2858350492566621 1.8640582760500115
+  position -2.1765153881208867 2.402220251679303 0.17358425296367036
   follow "SuperBot_v3"
-  followType "Mounted Shot"
 }
 Background {
   skyColor [
@@ -3942,7 +3941,7 @@ DEF SEU_SuperBot_v2 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.56440014661948e-17 1 3.8950801100898984e-16 3.0033622439795424
+      rotation 5.56440014661948e-17 1 3.89508011008989e-16 3.0033622439795424
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
@@ -4024,13 +4023,14 @@ DEF SEU_SuperBot_v3 Robot {
       height 128
       antiAliasing TRUE
       recognition Recognition {
+        occlusion FALSE
         frameColor 0.929412 0.831373 0
         frameThickness 3
       }
     }
     Camera {
-      translation 0.210101 0.000634386 0.579474
-      rotation 0.002540739421513401 -7.192318362421683e-09 0.9999967723163868 -1.568265307179586
+      translation 0.149395 -0.000229359 0.299624
+      rotation 0.5763732843333687 0.5793012857777945 0.576371284332382 2.09586
       children [
         Transform {
           translation 0 0 0.015
@@ -4051,12 +4051,13 @@ DEF SEU_SuperBot_v3 Robot {
         }
       ]
       name "camera_top"
-      fieldOfView 1.5
-      width 128
+      fieldOfView 1.8
+      width 256
       height 128
       antiAliasing TRUE
       recognition Recognition {
-        frameColor 0.929412 0.831373 0
+        occlusion FALSE
+        frameColor 0.17968 0.765625 0.7109
         frameThickness 3
       }
     }
@@ -4092,36 +4093,6 @@ DEF SEU_SuperBot_v3 Robot {
               }
               geometry Box {
                 size 0.33 0.25 0.135
-              }
-            }
-          ]
-        }
-        Transform {
-          translation -0.08 0 0.215
-          children [
-            DEF BodyTop Shape {
-              appearance PBRAppearance {
-                baseColor 0.870588 0.870588 0.870588
-                roughness 1
-                metalness 0
-              }
-              geometry Box {
-                size 0.2 0.25 0.135
-              }
-            }
-          ]
-        }
-        Transform {
-          translation -0.075 0 0.285
-          children [
-            DEF BodyRoof Shape {
-              appearance PBRAppearance {
-                baseColor 0.117647 0.117647 0.117647
-                roughness 1
-                metalness 0
-              }
-              geometry Box {
-                size 0.224 0.25 0.007
               }
             }
           ]
@@ -4484,7 +4455,7 @@ DEF SEU_SuperBot_v3 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.564399852069088e-17 0.9999999999999999 3.895080116399244e-16 3.0033622287042547
+      rotation 5.564399852069088e-17 0.9999999999999999 3.895080116399252e-16 3.0033622287042547
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"

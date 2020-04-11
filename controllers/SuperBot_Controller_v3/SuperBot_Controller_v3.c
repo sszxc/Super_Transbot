@@ -41,7 +41,8 @@ double gps_values[2];         //gps值
 double compass_angle;         //罗盘角度
 double initial_posture[3];    //起点位姿,0为x,1为z,2为角度，每段轨迹只设置一次
 double tmp_target_posture[3]; //临时目标位姿，需要不断计算
-double fin_target_posture[3]; //最终目标位姿，
+double fin_target_posture[3]; //最终目标位姿
+int GoodsonShelf[4][16];    //货架上的物品ID号 起点出发 逆时针
 
 //寻找货物定点 右->...-> 上->...->左->...->下
 int Travel_Point_Index = 0; //定点编号
@@ -64,10 +65,15 @@ double fixed_posture_travelaround[12][3] =
 int FindEmpty_Point_Index = 0; //定点编号
 double fixed_posture_findempty[4][3] =
     {
-        {1.05, 0.00, PI},          //右
-        {0.00, -1.05, 3 * PI / 2}, //上
-        {-1.05, 0, 0},             //左
-        {-1.05, 1.05, PI / 2}      //下
+        // {1.05, 0.00, PI},          //右
+        // {0.00, -1.05, 3 * PI / 2}, //上
+        // {-1.05, 0, 0},             //左
+        // {-1.05, 1.05, PI / 2}      //下
+        //反向
+        {1.05, 0.00, 0},          //右
+        {0.00, -1.05, PI / 2},    //上
+        {-1.05, 0, PI},           //左
+        {-1.05, 1.05, 3 * PI / 2} //下
 };
 
 //机器人状态枚举
@@ -103,7 +109,7 @@ void Find_Empty(WbDeviceTag camera, int goods_class);
 void Find_Goods(WbDeviceTag camera, int goods_class);
 bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID);
 void Return_and_Load(double targetplace);
-bool Moveto_CertainPoint(double fin_posture[]);
+bool Moveto_CertainPoint(double fin_posture[], double reach_precision);
 void Robot_State_Machine(int *main_state, int *grasp_state);
 
 //*?                 main函数      <开始>            ?*//
@@ -186,7 +192,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
   //初始工作状态，站在四个定点之一，准备识别空货架
   case Init_Pose:
   {
-    if (Moveto_CertainPoint(fin_target_posture))
+    if (Moveto_CertainPoint(fin_target_posture, 0.01))
     {
       *main_state = Recognize_Empty;
       printf("Ready for scanningscanning!/n");
@@ -200,7 +206,8 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
     //TODO ...这里写识别空货架
     Empty_Flag = 0;
     printf("Ready for scanning!/n");
-    Find_Empty(camera[1], 43);
+    Find_Empty(camera[0], 43);//用后置摄像头
+    *main_state = -1;
 
     if (Empty_Flag) //这里写识别结束标志位
     {
@@ -222,7 +229,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
     }
     else
     {
-      if (Moveto_CertainPoint(fin_target_posture))
+      if (Moveto_CertainPoint(fin_target_posture, 0.05))
       {
         *main_state = Recognize_Empty;
         set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
@@ -256,7 +263,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
     else
     {
       //TODO 这里还要处理往哪边近绕圈的问题
-      if (Moveto_CertainPoint(fin_target_posture))
+      if (Moveto_CertainPoint(fin_target_posture, 0.05))
       {
         set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
         Travel_Point_Index += 1;
@@ -268,7 +275,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
   //转身准备上货动作
   case TurnBack_To_LoadItem:
   {
-    if (Moveto_CertainPoint(fin_target_posture))
+    if (Moveto_CertainPoint(fin_target_posture, 0.05))
     {
       *main_state = Item_Loading;
     }
@@ -385,10 +392,10 @@ int keyboard_control(int c)
   return 0;
 }
 
-//GPS运动到指定位姿，返回bool值反馈是否到达
-bool Moveto_CertainPoint(double fin_posture[])
+//GPS运动到指定位姿，返回bool值反馈是否到达，默认精度0.05
+bool Moveto_CertainPoint(double fin_posture[], double reach_precision)
 {
-  if (targetdist_reached(fin_posture, 0.05) && targetpos_reached(fin_posture, 0.05))
+  if (targetdist_reached(fin_posture, reach_precision) && targetpos_reached(fin_posture, reach_precision))
   {
     printf("到达目标位置！\n");
     base_reset();
@@ -435,7 +442,7 @@ bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID)
         grasp_target_posture[2] = compass_angle;
 
         set_posture(fin_target_posture, grasp_target_posture[0], grasp_target_posture[1], grasp_target_posture[2]);
-        Moveto_CertainPoint(fin_target_posture);
+        Moveto_CertainPoint(fin_target_posture, 0.05);
 
         double grasp_threshold = 0.005;
         if (fabs(objects[i].position[0]) < grasp_threshold && fabs(objects[i].position[2] - grasp_dis_set) < grasp_threshold)
@@ -485,15 +492,15 @@ void Find_Empty(WbDeviceTag camera, int goods_class)
   const WbCameraRecognitionObject *objects = wb_camera_recognition_get_objects(camera);
   for (int i = 0; i < number_of_objects; ++i)
   {
-    printf("物体 %d 的类型: %s\n", i, objects[i].model);
-    printf("物体 %d 的ID: %d\n", i, objects[i].id);
+    // printf("物体 %d 的类型: %s\n", i, objects[i].model);
+    printf("物体 %d 的ID: %d ", i, objects[i].id);
     printf("物体 %d 的相对位置: %lf %lf %lf\n", i, objects[i].position[0], objects[i].position[1],
            objects[i].position[2]);
     // printf("物体 %d 的相对姿态: %lf %lf %lf %lf\n", i, objects[i].orientation[0], objects[i].orientation[1],
     //        objects[i].orientation[2], objects[i].orientation[3]);
     // printf("物体的大小 %d: %lf %lf\n", i, objects[i].size[0], objects[i].size[1]);
-    printf("物体 %d 在图像中的坐标: %d %d\n", i, objects[i].position_on_image[0],
-           objects[i].position_on_image[1]);
+    // printf("物体 %d 在图像中的坐标: %d %d\n", i, objects[i].position_on_image[0],
+    //        objects[i].position_on_image[1]);
     // printf("物体 %d 在图像中的大小: %d %d\n", i, objects[i].size_on_image[0], objects[i].size_on_image[1]);
     // for (int j = 0; j < objects[i].number_of_colors; ++j)
     //   printf("颜色 %d/%d: %lf %lf %lf\n", j + 1, objects[i].number_of_colors, objects[i].colors[3 * j],
