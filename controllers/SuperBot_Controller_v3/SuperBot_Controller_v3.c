@@ -44,7 +44,7 @@ double initial_posture[3];    //起点位姿,0为x,1为z,2为角度，每段轨�
 double tmp_target_posture[3]; //临时目标位姿，需要不断计算
 double fin_target_posture[3]; //最终目标位姿
 
-int GoodsonShelf[4][16];      //货架上的物品ID号 先下后上 先左后右
+
 int TargetIndex = 0;          //当前关注的货架空位
 int TargetGood;               //当前关注的货物种类
 int Item_Grasped_Id = -1;
@@ -87,6 +87,7 @@ double fixed_posture_loadItem[4][3] =
   {-1.05, 1.05, PI / 2}      //下
 };
 
+
 //机器人状态枚举
 enum RobotState
 {
@@ -96,8 +97,10 @@ enum RobotState
   Grab_Item,
   Back_Moving,
   TurnBack_To_LoadItem,
-  Item_Loading
+  Item_Loading,
+  RunTo_NextShelf
 };
+
 double width = 0.0;  //爪子0~0.1
 double height = 0.0; //爪子-0.05~0.45
 
@@ -196,9 +199,7 @@ void init_all()
   wb_motor_enable_force_feedback(gripper_motors[1], 1);
   wb_motor_enable_force_feedback(gripper_motors[2], 1);
 
-  for (int i = 0; i < 4;i++)
-    for (int j = 0; j < 16;j++)
-      GoodsonShelf[i][j] = -1;//不知道为啥写在定义的时候不成功
+
 }
 
 //机器人状态机
@@ -228,7 +229,11 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
     }
     else //货架上无空位
     {
-      //去下一个货架
+      printf("这个货架不用补货啦~\n");
+      CurrentShelf += 1;//换到下一货架,
+      Travel_Point_Index += 1;
+      set_posture(fin_target_posture, fixed_posture_travelaround[Travel_Point_Index][0], fixed_posture_travelaround[Travel_Point_Index][1], fixed_posture_travelaround[Travel_Point_Index][2]);
+      *main_state = RunTo_NextShelf;//前往下一个货架
     }
     break;
   }
@@ -245,6 +250,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
       if (Moveto_CertainPoint(fin_target_posture, 0.05))
       {
         travel_points_sum++;
+        printf("GoodsonShelf[%d][%d] need %s\n", CurrentShelf, TargetIndex, index2name(TargetGood));
         set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
         Travel_Point_Index += 1;
         Travel_Point_Index %= 12;
@@ -258,7 +264,9 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
   {
     if (Aim_and_Grasp(grasp_state, camera[1], Item_Grasped_Id))
     {
+      printf("抓到回去啦！\n");
       *main_state = Back_Moving;
+      *grasp_state = 0; 
     }
     break;
   }
@@ -272,8 +280,10 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
         {
           *main_state = TurnBack_To_LoadItem;
           set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
+          //设置下一目标点为反向180度
           set_posture(fin_target_posture, fixed_posture_loadItem[CurrentShelf][0], fixed_posture_loadItem[CurrentShelf][1], fixed_posture_loadItem[CurrentShelf][2]);
           printf("到上货的地方了！\n");
+          travel_points_sum = 0;
         }
         else
         {
@@ -347,6 +357,26 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
     }
     break;
   }
+  case RunTo_NextShelf:
+  {
+    if (Moveto_CertainPoint(fin_target_posture, 0.05))
+      {
+        //到达下一个货架
+        if(fin_target_posture[0] == fixed_posture_findempty[CurrentShelf][0] && fin_target_posture[1] == fixed_posture_findempty[CurrentShelf][1])
+        {
+          *main_state = Recognize_Empty;
+          printf("到下一个货架了！\n");
+        }
+        else
+        {
+          set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
+          Travel_Point_Index += 1;
+          Travel_Point_Index %= 12;
+          set_posture(fin_target_posture, fixed_posture_travelaround[Travel_Point_Index][0], fixed_posture_travelaround[Travel_Point_Index][1], fixed_posture_travelaround[Travel_Point_Index][2]);
+        }
+      }
+      
+  }  
   //ERROR
   default:
   {
@@ -553,6 +583,10 @@ bool Find_Empty(WbDeviceTag camera)
   int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
   // printf("识别到 %d 个物体.\n", number_of_objects);
   const WbCameraRecognitionObject *objects = wb_camera_recognition_get_objects(camera);
+  int GoodsonShelf[4][16];      //货架上的物品ID号 先下后上 先左后右
+  for (int i = 0; i < 4;i++)
+    for (int j = 0; j < 16;j++)
+      GoodsonShelf[i][j] = -1;//不知道为啥写在定义的时候不成功
   for (int i = 0; i < number_of_objects; ++i)
   {
     // printf("物体 %d 的类型: %s ", i, objects[i].model);
@@ -571,10 +605,10 @@ bool Find_Empty(WbDeviceTag camera)
     //           objects[i].colors[3 * j + 1], objects[i].colors[3 * j + 2]);
 
     int Shelfx = floor((objects[i].position[0] + 0.84) * 4.17 + 0.5); //左右 平均间隔0.24（架子宽度0.25）右移后对应一个系数 四舍五入
-    int Shelfy = (objects[i].position[1] < -0.22) ? 0 : 1;             //上下层 -0.22为上下分界
+    int Shelfy = (objects[i].position[1] < -0.2) ? 0 : 1;             //上下层 -0.20  为上下分界
 
     GoodsonShelf[CurrentShelf][Shelfy * 8 + Shelfx] = name2index(objects[i].model);
-    printf("物体 %s 对应序号 %d 写入 %d\n", objects[i].model, name2index(objects[i].model), GoodsonShelf[CurrentShelf][Shelfy * 8 + Shelfx]);
+    printf("物体 %s 对应编号 %d 写入[%d] 写入编号为%d\n", objects[i].model, name2index(objects[i].model),Shelfy * 8 + Shelfx, GoodsonShelf[CurrentShelf][Shelfy * 8 + Shelfx]);
   }
 
   //检测完毕 判断下一个要取的货物类型
@@ -632,16 +666,16 @@ bool Find_Goods(WbDeviceTag camera,char *good_name,int *item_grasped_id)
   int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
   const WbCameraRecognitionObject *objects = wb_camera_recognition_get_objects(camera);
   double grasp_dis_set = -0.4;
-  double grasp_threshold = 0.02;//TODO这个距离也和不同物品有关 要调整 这里有点bug 第二个货一直都不行
+  // double grasp_threshold = 0.02;//TODO这个距离也和不同物品有关 要调整 这里有点bug 第二个货一直都不行
   for (int i = 0; i < number_of_objects; ++i)
   {
     if(strcmp(objects[i].model,good_name) == 0)
     {
       double dis_tmp = fabs(objects[i].position[2] - grasp_dis_set);
       printf("距离 %s 有 %.3f m \n",good_name,dis_tmp);
-      if (dis_tmp <= grasp_threshold && fabs(objects[i].position[0]) < 5 * grasp_threshold)
+      if (dis_tmp <= 0.06 && fabs(objects[i].position[0]) < 0.1)
       {
-        printf("距离 %s 有 %.3f m \n", good_name, dis_tmp);
+        printf("找到了离我%.3f m 的 %s\n", dis_tmp, good_name);
         *item_grasped_id = objects[i].id;
         return true;
       }
