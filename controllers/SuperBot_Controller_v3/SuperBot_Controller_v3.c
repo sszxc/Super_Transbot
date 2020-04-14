@@ -50,8 +50,8 @@ int TargetGood;               //当前关注的货物种类
 int Item_Grasped_Id = -1;
 double load_target_posture[3];//上货点
 
-char *GoodsList[] = {"can", "cereal box", "jam jar", "honey jar", "water bottle"};
-
+char *GoodsList[] =      {"can", "cereal box", "jam jar", "honey jar", "water bottle"};
+double Grasp_dis_set[] = {-0.16, -0.2,          -0.16,       -0.16,       -0.16};
 //寻找货物定点 右->...-> 上->...->左->...->下
 int Travel_Point_Index = 0; //定点编号
 int travel_points_sum = 0;//走过的定点数量
@@ -244,6 +244,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
     if (Find_Goods(camera[1],index2name(TargetGood),&Item_Grasped_Id))
     {
       *main_state = Grab_Item;
+      set_posture(fin_target_posture,gps_values[0], gps_values[1], compass_angle);
     }
     else
     {
@@ -522,8 +523,9 @@ bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID)
         get_gps_values(gps_values);
         get_compass_angle(&compass_angle);
         double grasp_target_posture[3];
-        double grasp_dis_set = -0.16;//TODO 这个距离和不同的物品有关 需要改改 或者加长一下爪子
-
+        
+        double grasp_dis_set = Grasp_dis_set[name2index(objects[i].model)];//TODO 这个距离和不同的物品有关 需要改改 或者加长一下爪子
+        printf("抓取距离:%.3f\n",grasp_dis_set);
         //相对偏移 同时纵向位移稍微削弱一下
         grasp_target_posture[0] = gps_values[0] - sin(compass_angle) * objects[i].position[0] + cos(compass_angle) * (objects[i].position[2] - grasp_dis_set) * 0.6;
         grasp_target_posture[1] = gps_values[1] - cos(compass_angle) * objects[i].position[0] - sin(compass_angle) * (objects[i].position[2] - grasp_dis_set) * 0.6;
@@ -546,13 +548,13 @@ bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID)
       else if (*grasp_state == 1) //抓
       {
         printf("当前电机力反馈：%.3f\n", wb_motor_get_force_feedback(gripper_motors[1]));
-        if (wb_motor_get_force_feedback(gripper_motors[1]) > -8)
+        if (wb_motor_get_force_feedback(gripper_motors[1]) > -9.9)
           moveFingers(width -= 0.0001); //步进
         else
         {
           printf("抓紧了！\n");
           wb_robot_step(50000 / TIME_STEP); //等他抓稳定
-          if (wb_motor_get_force_feedback(gripper_motors[1]) < -8)
+          if (wb_motor_get_force_feedback(gripper_motors[1]) <= -9.9)
           {
             printf("爪宽：%.4f\n", width);
             *grasp_state += 1;            
