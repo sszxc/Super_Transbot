@@ -210,7 +210,6 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
   //初始工作状态，站在四个定点之一，准备识别空货架
   case Init_Pose:
   {
-    //TODO 确定一下当前货架
     //CurrentShelf = 0;
     if (Moveto_CertainPoint(fin_target_posture, 0.01))
     {
@@ -314,8 +313,8 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
       //计算一次和上货点的相对位移
       get_gps_values(gps_values);
       get_compass_angle(&compass_angle);
-      double load_x = (TargetIndex%8) * 0.24 - 0.84;
-      double load_z = -0.25;//两步走
+      double load_x = (TargetIndex % 8) * 0.24 - 0.84;
+      double load_z = -0.2;//两步走
       load_target_posture[0] = gps_values[0] - sin(compass_angle) * load_x + cos(compass_angle) * load_z;
       load_target_posture[1] = gps_values[1] - cos(compass_angle) * load_x - sin(compass_angle) * load_z;
       load_target_posture[2] = compass_angle;
@@ -329,7 +328,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
     printf("GPS device: %.3f %.3f\n", gps_values[0], gps_values[1]);
     if(Moveto_CertainPoint(load_target_posture, 0.01))
     {
-      double load_z_add = -0.15;
+      double load_z_add = -0.20;//最后前进一些
       load_target_posture[0] = gps_values[0] + cos(compass_angle) * load_z_add;
       load_target_posture[1] = gps_values[1] - sin(compass_angle) * load_z_add;
       load_target_posture[2] = compass_angle;
@@ -524,7 +523,7 @@ bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID)
         get_compass_angle(&compass_angle);
         double grasp_target_posture[3];
         
-        double grasp_dis_set = Grasp_dis_set[name2index(objects[i].model)];//TODO 这个距离和不同的物品有关 需要改改 或者加长一下爪子
+        double grasp_dis_set = Grasp_dis_set[name2index(objects[i].model)];
         printf("抓取距离:%.3f\n",grasp_dis_set);
         //相对偏移 同时纵向位移稍微削弱一下
         grasp_target_posture[0] = gps_values[0] - sin(compass_angle) * objects[i].position[0] + cos(compass_angle) * (objects[i].position[2] - grasp_dis_set) * 0.6;
@@ -547,14 +546,15 @@ bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID)
       }
       else if (*grasp_state == 1) //抓
       {
+        double grasp_force_threshold = 30.0;
         printf("当前电机力反馈：%.3f\n", wb_motor_get_force_feedback(gripper_motors[1]));
-        if (wb_motor_get_force_feedback(gripper_motors[1]) > -9.9)
-          moveFingers(width -= 0.0001); //步进
+        if (wb_motor_get_force_feedback(gripper_motors[1]) > -grasp_force_threshold)
+          moveFingers(width -= 0.0003); //步进
         else
         {
           printf("抓紧了！\n");
-          wb_robot_step(50000 / TIME_STEP); //等他抓稳定
-          if (wb_motor_get_force_feedback(gripper_motors[1]) <= -9.9)
+          wb_robot_step(30000 / TIME_STEP); //等他抓稳定
+          if (wb_motor_get_force_feedback(gripper_motors[1]) <= -grasp_force_threshold)
           {
             printf("爪宽：%.4f\n", width);
             *grasp_state += 1;            
@@ -562,9 +562,9 @@ bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID)
             if (TargetIndex < 8)
               lift(height = 0.020);
             else if (CurrentShelf % 2 == 0) //矮柜0.215
-              lift(height = 0.215);
+              lift(height = 0.220);
             else if (CurrentShelf % 2 == 1) //高柜0.415
-              lift(height = 0.420);
+              lift(height = 0.430);
             printf("举起了！\n");
           }
         }
@@ -606,7 +606,7 @@ bool Find_Empty(WbDeviceTag camera)
     //   printf("颜色 %d/%d: %lf %lf %lf\n", j + 1, objects[i].number_of_colors, objects[i].colors[3 * j],
     //           objects[i].colors[3 * j + 1], objects[i].colors[3 * j + 2]);
 
-    int Shelfx = floor((objects[i].position[0] + 0.84) * 4.17 + 0.5); //左右 平均间隔0.24（架子宽度0.25）右移后对应一个系数 四舍五入
+    int Shelfx = max(0,floor((objects[i].position[0] + 0.84) * 4.17 + 0.5)); //左右 平均间隔0.24（架子宽度0.25）右移后对应一个系数 四舍五入
     int Shelfy = (objects[i].position[1] < -0.2) ? 0 : 1;             //上下层 -0.20  为上下分界
 
     GoodsonShelf[CurrentShelf][Shelfy * 8 + Shelfx] = name2index(objects[i].model);
@@ -667,18 +667,16 @@ bool Find_Goods(WbDeviceTag camera,char *good_name,int *item_grasped_id)
 {
   int number_of_objects = wb_camera_recognition_get_number_of_objects(camera);
   const WbCameraRecognitionObject *objects = wb_camera_recognition_get_objects(camera);
-  double grasp_dis_set = -0.4;
-  // double grasp_threshold = 0.02;//TODO这个距离也和不同物品有关 要调整 这里有点bug 第二个货一直都不行
+  double grasp_dis_threshold = -0.5;
   for (int i = 0; i < number_of_objects; ++i)
   {
     if(strcmp(objects[i].model,good_name) == 0)
     {
-      double dis_tmp = fabs(objects[i].position[2] - grasp_dis_set);
-      printf("距离 %s 有 %.3f m \n",good_name,dis_tmp);
+      printf("距离 %s 有 %.3f m \n", good_name, -objects[i].position[2]);
       //距离近、左右位置对、且是侧面
-      if (dis_tmp <= 0.06 && fabs(objects[i].position[0]) < 0.1 && objects[i].size[0] <= 0.15)
+      if (objects[i].position[2] > grasp_dis_threshold && fabs(objects[i].position[0]) < 0.1 && objects[i].size[0] <= 0.15)
       {
-        printf("找到了离我%.3f m 的 %s\n", dis_tmp, good_name);
+        printf("找到了离我%.3f m 的 %s\n", -objects[i].position[2], good_name);
         *item_grasped_id = objects[i].id;
         return true;
       }
