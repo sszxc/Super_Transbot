@@ -51,7 +51,8 @@ int Item_Grasped_Id = -1;
 double load_target_posture[3];//上货点
 
 char *GoodsList[] = {"can", "cereal box", "cereal box red", "jam jar", "honey jar", "water bottle", "biscuit box", "red can", "beer bottle"};
-double Grasp_dis_set[] = {-0.16,  -0.2,         -0.2,             -0.16,       -0.16,       -0.16,         -0.16,    -0.16,       -0.16} ;
+//抓取时前探的距离，绝对值越小，前探越前
+double Grasp_dis_set[] = {-0.16,  -0.18,         -0.18,             -0.16,       -0.16,       -0.16,         -0.16,    -0.16,       -0.16} ;
 //寻找货物定点 右->...-> 上->...->左->...->下
 int Travel_Point_Index = 0; //定点编号
 int travel_points_sum = 0;//走过的定点数量
@@ -296,7 +297,11 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
         {
           set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
           if(travel_points_sum >= 6) Travel_Point_Index += 1;//顺时针转
-          else Travel_Point_Index -= 1;//逆时针转
+          else 
+          {
+            if(Travel_Point_Index == 0) Travel_Point_Index = 12;
+            Travel_Point_Index -= 1;//逆时针转
+          }
           Travel_Point_Index %= 12;
           Travel_Point_Index = max(0,Travel_Point_Index);
           set_posture(fin_target_posture, fixed_posture_travelaround[Travel_Point_Index][0], fixed_posture_travelaround[Travel_Point_Index][1], fixed_posture_travelaround[Travel_Point_Index][2]);
@@ -322,7 +327,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
       get_gps_values(gps_values);
       get_compass_angle(&compass_angle);
       double load_x = (TargetIndex % 8) * 0.24 - 0.84;
-      double load_z = -0.2;//两步走
+      double load_z = -0.16;//两步走
       load_target_posture[0] = gps_values[0] - sin(compass_angle) * load_x + cos(compass_angle) * load_z;
       load_target_posture[1] = gps_values[1] - cos(compass_angle) * load_x - sin(compass_angle) * load_z;
       load_target_posture[2] = compass_angle;
@@ -336,7 +341,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
     // printf("GPS device: %.3f %.3f\n", gps_values[0], gps_values[1]);
     if(Moveto_CertainPoint(load_target_posture, 0.01))
     {
-      double load_z_add = -0.16;//最后前进一些
+      double load_z_add = -0.24;//最后前进一些
       load_target_posture[0] = gps_values[0] + cos(compass_angle) * load_z_add;
       load_target_posture[1] = gps_values[1] - sin(compass_angle) * load_z_add;
       load_target_posture[2] = compass_angle;
@@ -529,15 +534,21 @@ bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID)
     {
       if (*grasp_state == 0) //调整位置
       {
-        lift(0.0);
+        //大盒子特别提高一点抓，防止倾倒
+        if(!strcmp("cereal box red",objects[i].model)||!strcmp("cereal box",objects[i].model))
+          lift(height = 0.05);
+        //水瓶特别提高一点
+        else if(!strcmp("water bottle",objects[i].model))
+          lift(height = 0.10);
+        else lift(height = 0.0);
         moveFingers(width = objects[i].size[0] / 1.5);
-        printf("ID %d 的物体 %s 在 %lf %lf\n", objects[i].id, objects[i].model, objects[i].position[0], objects[i].position[2]);
+        // printf("ID %d 的物体 %s 在 %lf %lf\n", objects[i].id, objects[i].model, objects[i].position[0], objects[i].position[2]);
         get_gps_values(gps_values);
         get_compass_angle(&compass_angle);
         double grasp_target_posture[3];
         
         double grasp_dis_set = Grasp_dis_set[name2index(objects[i].model)];
-        printf("抓取距离:%.3f\n",grasp_dis_set);
+        // printf("抓取距离:%.3f\n",grasp_dis_set);
         //相对偏移 同时纵向位移稍微削弱一下
         grasp_target_posture[0] = gps_values[0] - sin(compass_angle) * objects[i].position[0] + cos(compass_angle) * (objects[i].position[2] - grasp_dis_set) * 0.6;
         grasp_target_posture[1] = gps_values[1] - cos(compass_angle) * objects[i].position[0] - sin(compass_angle) * (objects[i].position[2] - grasp_dis_set) * 0.6;
@@ -559,7 +570,7 @@ bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID)
       }
       else if (*grasp_state == 1) //抓
       {
-        double grasp_force_threshold = 30.0;
+        double grasp_force_threshold = 50.0;
         if (wb_motor_get_force_feedback(gripper_motors[1]) > -grasp_force_threshold)
           moveFingers(width -= 0.0003); //步进
         else
@@ -572,13 +583,19 @@ bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID)
             printf("爪宽：%.4f\n", width);
             *grasp_state += 1;            
             printf("GoodsonShelf[%d][%d] need %s\n", CurrentShelf, TargetIndex, index2name(TargetGood));
-            if (TargetIndex < 8)
-              lift(height = 0.020);
-            else if (CurrentShelf % 2 == 0) //矮柜0.215
-              lift(height = 0.220);
-            else if (CurrentShelf % 2 == 1) //高柜0.415
-              lift(height = 0.430);
-            printf("举起了！\n");
+            if(!strcmp("water bottle",objects[i].model))//水杯特殊高度
+              lift(height = 0.12);
+            else if(!strcmp("cereal box red",objects[i].model))//红大盒子特殊高度
+              lift(height = 0.50);
+            else if(!strcmp("cereal box",objects[i].model))
+              lift(height = 0.30);
+            else if (TargetIndex < 8)
+              lift(height = 0.02);
+            else if (CurrentShelf % 2 == 0) //矮柜0.23
+              lift(height = 0.23);
+            else if (CurrentShelf % 2 == 1) //高柜0.43
+              lift(height = 0.43);
+            printf("举起了！height = %.3f\n",height);
             wb_robot_step(10000 / TIME_STEP);
           }
         }
@@ -687,7 +704,7 @@ bool Find_Goods(WbDeviceTag camera,char *good_name,int *item_grasped_id)
     if(strcmp(objects[i].model,good_name) == 0)
     {
       if (objects[i].position[2] > 1.3*grasp_dis_threshold)
-        printf("距离 %s 有 %.3f m \n", good_name, -objects[i].position[2]);
+        // printf("距离 %s 有 %.3f m \n", good_name, -objects[i].position[2]);
       //距离近、左右位置对、且是侧面
       if (objects[i].position[2] > grasp_dis_threshold && fabs(objects[i].position[0]) < 0.1 && objects[i].size[0] <= 0.15)
       {
