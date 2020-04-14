@@ -50,8 +50,8 @@ int TargetGood;               //当前关注的货物种类
 int Item_Grasped_Id = -1;
 double load_target_posture[3];//上货点
 
-char *GoodsList[] =      {"can", "cereal box", "jam jar", "honey jar", "water bottle"};
-double Grasp_dis_set[] = {-0.16, -0.2,          -0.16,       -0.16,       -0.16};
+char *GoodsList[] =      {"can", "cereal box","cereal box red", "jam jar", "honey jar", "water bottle"};
+double Grasp_dis_set[] = {-0.16, -0.2,         -0.2,             -0.16,       -0.16,       -0.16};
 //寻找货物定点 右->...-> 上->...->左->...->下
 int Travel_Point_Index = 0; //定点编号
 int travel_points_sum = 0;//走过的定点数量
@@ -314,7 +314,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
       //计算一次和上货点的相对位移
       get_gps_values(gps_values);
       get_compass_angle(&compass_angle);
-      double load_x = TargetIndex * 0.24 - 0.84;
+      double load_x = (TargetIndex%8) * 0.24 - 0.84;
       double load_z = -0.25;//两步走
       load_target_posture[0] = gps_values[0] - sin(compass_angle) * load_x + cos(compass_angle) * load_z;
       load_target_posture[1] = gps_values[1] - cos(compass_angle) * load_x - sin(compass_angle) * load_z;
@@ -675,7 +675,8 @@ bool Find_Goods(WbDeviceTag camera,char *good_name,int *item_grasped_id)
     {
       double dis_tmp = fabs(objects[i].position[2] - grasp_dis_set);
       printf("距离 %s 有 %.3f m \n",good_name,dis_tmp);
-      if (dis_tmp <= 0.06 && fabs(objects[i].position[0]) < 0.1)
+      //距离近、左右位置对、且是侧面
+      if (dis_tmp <= 0.06 && fabs(objects[i].position[0]) < 0.1 && objects[i].size[0] <= 0.15)
       {
         printf("找到了离我%.3f m 的 %s\n", dis_tmp, good_name);
         *item_grasped_id = objects[i].id;

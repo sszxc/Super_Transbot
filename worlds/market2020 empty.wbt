@@ -45,8 +45,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.23841352040937713 -0.9372628343513633 -0.25435678215777224 1.6999585077366242
-  position -3.6236506657727423 3.1077326165314365 0.004470753526137225
+  orientation -0.27369082882052836 0.9406874663775463 0.20050042598389886 1.3233232857078572
+  position 3.695694682627149 1.422199791345147 2.0864159822378587
   follow "SuperBot_v3"
   followType "Mounted Shot"
 }
@@ -166,7 +166,7 @@ Solid {
     }
   ]
   name "cereal box(8)"
-  model "cereal box"
+  model "cereal box red"
   boundingObject Transform {
     translation 0 0.15 0
     children [
@@ -231,7 +231,7 @@ Solid {
     }
   ]
   name "cereal box(2)"
-  model "cereal box"
+  model "cereal box red"
   boundingObject Transform {
     translation 0 0.15 0
     children [
@@ -296,7 +296,7 @@ Solid {
     }
   ]
   name "cereal box(6)"
-  model "cereal box"
+  model "cereal box red"
   boundingObject Transform {
     translation 0 0.15 0
     children [
@@ -361,7 +361,7 @@ Solid {
     }
   ]
   name "cereal box(1)"
-  model "cereal box"
+  model "cereal box red"
   boundingObject Transform {
     translation 0 0.15 0
     children [
@@ -426,7 +426,7 @@ Solid {
     }
   ]
   name "cereal box(3)"
-  model "cereal box"
+  model "cereal box red"
   boundingObject Transform {
     translation 0 0.15 0
     children [
@@ -491,7 +491,7 @@ Solid {
     }
   ]
   name "cereal box(4)"
-  model "cereal box"
+  model "cereal box red"
   boundingObject Transform {
     translation 0 0.15 0
     children [
@@ -556,7 +556,7 @@ Solid {
     }
   ]
   name "cereal box(5)"
-  model "cereal box"
+  model "cereal box red"
   boundingObject Transform {
     translation 0 0.15 0
     children [
@@ -966,7 +966,7 @@ Solid {
   ]
 }
 Solid {
-  translation 0.333138 0.0010538 -0.469717
+  translation 0.535265 0.0010538 -0.47582
   rotation 0.9999999128244915 0.0004112108755284978 7.250258614924198e-05 -3.964597635178183e-13
   children [
     Transform {
@@ -1106,7 +1106,7 @@ JamJar {
   name "jam jar(3)"
 }
 BiscuitBox {
-  translation 0.522451 0.00117152 -0.383642
+  translation 0.503864 0.00117152 -0.248853
   rotation 0.15687926519497292 -0.9863872013251653 0.04928676509767285 -1.247581883050046e-16
   name "biscuit box(7)"
   size 0.14 0.18 0.08
@@ -2252,7 +2252,7 @@ Solid {
   ]
 }
 BiscuitBox {
-  translation 0.515276 0.001171520011825647 -0.18622
+  translation 0.498363 0.00117152 -0.103015
   rotation -0.22532735612263413 0.9731785257795098 -0.04638037887300491 1.3257605199472e-16
   name "biscuit box(6)"
   size 0.14 0.18 0.08
@@ -2302,8 +2302,8 @@ Solid {
       ]
     }
   ]
-  name "cereal box(18)"
-  model "cereal box"
+  name "cereal box(14)"
+  model "cereal box red"
   boundingObject Transform {
     translation 0 0.15 0
     children [
@@ -3417,9 +3417,17 @@ DEF bear Can {
   ]
 }
 DEF bear Can {
-  translation 1.83179 0.0623157 -0.130453
+  translation 1.84801 0.0623157 -0.380829
   rotation 1.9222521078304474e-10 1 1.1355276481055271e-10 -7.239265401191742e-07
   name "can(14)"
+  textureUrl [
+    "textures/can_beer_base_color.jpg"
+  ]
+}
+DEF bear Can {
+  translation 1.83179 0.0623157 -0.130453
+  rotation 1.9222521078304474e-10 1 1.1355276481055271e-10 -7.239265401191742e-07
+  name "can(5)"
   textureUrl [
     "textures/can_beer_base_color.jpg"
   ]
@@ -4372,7 +4380,7 @@ DEF SEU_SuperBot_v3 Robot {
               name "lift motor"
               minPosition -0.05
               maxPosition 0.45
-              maxForce 1000
+              maxForce 2000
             }
           ]
           endPoint DEF LIFT Solid {
