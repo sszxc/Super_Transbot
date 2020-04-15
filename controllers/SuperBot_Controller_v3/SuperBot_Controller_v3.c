@@ -340,7 +340,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
   {
     get_gps_values(gps_values);
     // printf("GPS device: %.3f %.3f\n", gps_values[0], gps_values[1]);
-    if(Moveto_CertainPoint(load_target_posture, 0.01))
+    if(Moveto_CertainPoint(load_target_posture, 0.001))
     {
       double load_z_add = -0.24;//最后前进一些
       load_target_posture[0] = gps_values[0] + cos(compass_angle) * load_z_add;
@@ -352,13 +352,19 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
       }
       base_reset();
       printf("小心上货！\n");
-      wb_robot_step(100000 / TIME_STEP);
+      wb_robot_step(50000 / TIME_STEP);
       moveFingers(width += 0.005);
-      wb_robot_step(100000 / TIME_STEP);
+      wb_robot_step(50000 / TIME_STEP);
 
       load_target_posture[0] = gps_values[0] - cos(compass_angle) * load_z_add;
       load_target_posture[1] = gps_values[1] + sin(compass_angle) * load_z_add;
       load_target_posture[2] = compass_angle;
+      while (!Moveto_CertainPoint(load_target_posture, 0.01))
+      {
+        step(); //嘻嘻乱了时序 直接在里面循环了
+      }
+      load_target_posture[2] = (compass_angle > PI) ? compass_angle - PI : compass_angle + PI; //原地自转回来
+
       while (!Moveto_CertainPoint(load_target_posture, 0.01))
       {
         step(); //嘻嘻乱了时序 直接在里面循环了
