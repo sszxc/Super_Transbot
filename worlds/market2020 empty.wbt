@@ -47,8 +47,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.32721087828480494 -0.8860303091144123 -0.3284559825345028 1.695275708318233
-  position -4.241467625177949 4.170410967633467 0.023712914000244084
+  orientation 0.15020136268931472 0.9515068934072141 0.2684663525375677 4.119973038580415
+  position 0.17284463380692866 1.1008508220250084 0.6558666020996573
   follow "SuperBot_v3"
   followType "None"
 }
@@ -4329,7 +4329,7 @@ DEF SEU_SuperBot_v1 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.564400156954928e-17 1 3.8950801098685317e-16 3.0033622445155332
+      rotation 5.564400156954928e-17 0.9999999999999999 3.895080109868531e-16 3.0033622445155332
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
@@ -4525,7 +4525,7 @@ DEF SEU_SuperBot_v2 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.564400146619326e-17 1 3.895080110089903e-16 3.0033622439795344
+      rotation 5.564400146619326e-17 1 3.8950801100899033e-16 3.0033622439795344
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
@@ -4648,8 +4648,8 @@ DEF SEU_SuperBot_v3 Robot {
           children [
             DEF BodyBase Shape {
               appearance DEF WHITE PBRAppearance {
+                baseColor 0.7617 0.9141 0.8438
                 roughness 1
-                metalness 0
               }
               geometry Box {
                 size 0.4 0.25 0.035
@@ -4660,50 +4660,54 @@ DEF SEU_SuperBot_v3 Robot {
         Transform {
           translation -0.03 0 0.068
           children [
-            Transform {
-              translation -0.15 0.11 0.165
-              rotation 1 0 0 1.5708
+            DEF STICK Group {
               children [
-                DEF Support Shape {
-                  appearance PBRAppearance {
-                    metalness 0
-                  }
-                  geometry Cylinder {
-                    height 0.25
-                    radius 0.012
-                  }
+                Transform {
+                  translation -0.15 0.11 0.165
+                  rotation 1 0 0 1.5708
+                  children [
+                    DEF Support Shape {
+                      appearance DEF STICK_color PBRAppearance {
+                        baseColor 0.56640625 0.56640625 0.56640625
+                        metalness 0
+                      }
+                      geometry Cylinder {
+                        height 0.25
+                        radius 0.012
+                      }
+                    }
+                  ]
+                }
+                Transform {
+                  translation -0.15 -0.110008 0.165
+                  rotation 1 0 0 1.57
+                  children [
+                    USE Support
+                  ]
+                }
+                Transform {
+                  translation 0.12 0.109992 0.165
+                  rotation 0.983092368810612 -0.12942704855501933 0.12953004859366019 1.58705
+                  children [
+                    USE Support
+                  ]
+                }
+                Transform {
+                  translation 0.122588 -0.110016 0.155341
+                  rotation 0.983092368810612 -0.12942704855501933 0.12953004859366019 1.58705
+                  children [
+                    USE Support
+                  ]
                 }
               ]
             }
-            Transform {
-              translation -0.15 -0.110008 0.165
-              rotation 1 0 0 1.57
-              children [
-                USE Support
-              ]
-            }
-            Transform {
-              translation 0.12 0.109992 0.165
-              rotation 0.983092368810612 -0.12942704855501933 0.12953004859366019 1.58705
-              children [
-                USE Support
-              ]
-            }
-            Transform {
-              translation 0.12 -0.110008 0.165
-              rotation 0.983092368810612 -0.12942704855501933 0.12953004859366019 1.58705
-              children [
-                USE Support
-              ]
-            }
-            Transform {
+            DEF TOP Transform {
               translation -0.03 0 0.29
               children [
                 Shape {
                   appearance DEF PINK PBRAppearance {
-                    baseColor 0.9765 0.4453 0.5938
+                    baseColor 0.33203125 0.74609375 0.19140625
                     roughness 1
-                    metalness 0
                   }
                   geometry Box {
                     size 0.27 0.25 0.015
@@ -4711,7 +4715,7 @@ DEF SEU_SuperBot_v3 Robot {
                 }
               ]
             }
-            Transform {
+            DEF STEER Transform {
               translation 0.0949979 -8.87516e-05 0.0650404
               rotation 0.9830924960489368 -0.12942606530582051 0.12953006535829686 1.58705
               children [
@@ -4783,7 +4787,7 @@ DEF SEU_SuperBot_v3 Robot {
                 }
               ]
             }
-            Transform {
+            DEF SEAT Transform {
               translation -0.01 0 0.05
               children [
                 Transform {
@@ -4792,6 +4796,7 @@ DEF SEU_SuperBot_v3 Robot {
                   children [
                     Shape {
                       appearance PBRAppearance {
+                        baseColor 0.554688 0.554688 0.554688
                         roughness 1
                         metalness 0
                       }
@@ -4803,7 +4808,7 @@ DEF SEU_SuperBot_v3 Robot {
                 }
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.780392 0.780392 0.780392
+                    baseColor 0.554688 0.554688 0.554688
                     roughness 1
                     metalness 0
                   }
@@ -4813,11 +4818,12 @@ DEF SEU_SuperBot_v3 Robot {
                 }
               ]
             }
-            Transform {
+            DEF ribbon Transform {
               translation 0 0 0.0446
               children [
                 Shape {
-                  appearance PBRAppearance {
+                  appearance DEF ribbon_color PBRAppearance {
+                    baseColor 0.9219 0.9961 0.3242
                     roughness 1
                     metalness 0
                   }
@@ -5211,7 +5217,7 @@ DEF SEU_SuperBot_v3 Robot {
         children [
           Shape {
             appearance DEF Wheel_Outside_Color PBRAppearance {
-              baseColor 1 0.439216 0.588235
+              baseColor 0.0859375 0.18359375 0.05078125
               roughness 0.3
             }
             geometry IndexedFaceSet {
