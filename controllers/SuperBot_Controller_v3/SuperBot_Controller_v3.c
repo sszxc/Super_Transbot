@@ -232,6 +232,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
     {
       printf("这个货架%d不用补货啦~\n",CurrentShelf);
       CurrentShelf += 1;//换到下一货架,
+      CurrentShelf %= 4;
       Travel_Point_Index += 1;
       Travel_Point_Index %= 12;
       set_posture(initial_posture, gps_values[0], gps_values[1], compass_angle);
@@ -590,7 +591,7 @@ bool Aim_and_Grasp(int *grasp_state, WbDeviceTag camera, int objectID)
             else if(!strcmp("cereal box",objects[i].model))
               lift(height = 0.30);
             else if (TargetIndex < 8)
-              lift(height = 0.02);
+              lift(height = 0.05);
             else if (CurrentShelf % 2 == 0) //矮柜0.23
               lift(height = 0.23);
             else if (CurrentShelf % 2 == 1) //高柜0.43
