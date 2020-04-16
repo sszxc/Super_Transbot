@@ -47,10 +47,9 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.15020136268931472 0.9515068934072141 0.2684663525375677 4.119973038580415
-  position 0.17284463380692866 1.1008508220250084 0.6558666020996573
+  orientation 0.21413658786633008 0.9427059520845932 0.25583394935239995 4.477659286265975
+  position -0.796637526820591 1.3735523491656323 0.9453560255685125
   follow "SuperBot_v3"
-  followType "None"
 }
 Background {
   skyColor [
@@ -399,7 +398,7 @@ DEF soda Solid {
   ]
 }
 DEF soda Solid {
-  translation -0.328343 0.0630657 0.501326
+  translation -0.332121 0.0630657 0.547185
   rotation -0.011203983464043417 -0.9998727483277364 -0.011355963458753676 1.7060075766500103e-06
   children [
     Shape {
@@ -454,7 +453,7 @@ DEF soda Solid {
   ]
 }
 DEF soda Solid {
-  translation -0.171467 0.0630657 0.495722
+  translation -0.540601 0.0630657 -0.136827
   rotation -0.011203983464043417 -0.9998727483277364 -0.011355963458753676 1.7060075766500103e-06
   children [
     Shape {
@@ -521,7 +520,7 @@ Floor {
   size 4 4
 }
 JamJar {
-  translation -0.543445 0.00070095 -0.23293
+  translation -0.530371 0.00070095 -0.327423
   rotation 2.317758569458021e-16 1 7.530911277930368e-16 0.2595992203272888
   name "jam jar(1)"
 }
@@ -2736,14 +2735,14 @@ Solid {
   ]
 }
 BiscuitBox {
-  translation 0.498363 0.0011715199999999953 -0.103015
+  translation 0.456844 0.00117152 -0.202034
   rotation -0.27161223418816216 0.9594200580069974 0.07576243484184418 1.352677294016938e-16
   name "biscuit box(6)"
   size 0.14 0.18 0.08
 }
 BiscuitBox {
-  translation 0.495145 0.00117152 -0.243202
-  rotation -0.27161223418816216 0.9594200580069974 0.07576243484184418 1.352677294016938e-16
+  translation -0.162828 0.00117152 0.526873
+  rotation 1.32461e-17 1 -2.34943e-17 -1.5707953071795862
   name "biscuit box(7)"
   size 0.14 0.18 0.08
 }
@@ -3841,7 +3840,7 @@ DEF bear Can {
   ]
 }
 DEF bear Can {
-  translation -0.508828 0.062315665000034 0.393157
+  translation -0.531621 0.0623157 0.390861
   rotation -8.827875451119822e-11 1 1.346356028771105e-10 -7.239265401008481e-07
   name "can(10)"
   textureUrl [
@@ -3849,7 +3848,7 @@ DEF bear Can {
   ]
 }
 DEF beer Can {
-  translation -0.500452 0.062315665 0.532921
+  translation -0.523712 0.0623157 0.527929
   rotation -3.3809296347550756e-14 0.9999999999999999 -6.511328085976116e-15 0.010186318133006718
   name "can(2)"
   textureUrl [
@@ -4329,7 +4328,7 @@ DEF SEU_SuperBot_v1 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.564400156954928e-17 0.9999999999999999 3.895080109868531e-16 3.0033622445155332
+      rotation 5.564400156954932e-17 1 3.8950801098685317e-16 3.0033622445155332
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
@@ -4525,7 +4524,7 @@ DEF SEU_SuperBot_v2 Robot {
     }
     DEF WHEEL1 InteriorWheel {
       translation 0.133 -0.163 -0.015
-      rotation 5.564400146619326e-17 1 3.8950801100899033e-16 3.0033622439795344
+      rotation 5.564400146619326e-17 1 3.8950801100899057e-16 3.0033622439795344
       anchor 0.133 -0.163 -0.015
       name "wheel1"
       sensorName "wheel1sensor"
@@ -4699,6 +4698,36 @@ DEF SEU_SuperBot_v3 Robot {
                     USE Support
                   ]
                 }
+                Transform {
+                  translation 0.150429 -0.145988 0.0831015
+                  rotation 0.7040609542935296 -0.092693693982479 -0.7040639542933348 0.369703
+                  children [
+                    Shape {
+                      appearance PBRAppearance {
+                        roughness 1
+                        metalness 0
+                      }
+                      geometry Box {
+                        size 0.01 0.05 0.08
+                      }
+                    }
+                  ]
+                }
+                Transform {
+                  translation 0.15 0.146 0.0831
+                  rotation 0.7040997473567413 -0.09270314894648864 -0.7040239143293203 -0.37
+                  children [
+                    Shape {
+                      appearance PBRAppearance {
+                        roughness 1
+                        metalness 0
+                      }
+                      geometry Box {
+                        size 0.01 0.05 0.08
+                      }
+                    }
+                  ]
+                }
               ]
             }
             DEF TOP Transform {
@@ -4838,6 +4867,38 @@ DEF SEU_SuperBot_v3 Robot {
               geometry Box {
                 size 0.33 0.25 0.1
               }
+            }
+            DEF EyesL Transform {
+              translation 0.135 -0.08 -0.01
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 1 1 0.498039
+                    roughness 1
+                    metalness 0.1
+                    emissiveColor 1 1 0
+                  }
+                  geometry Sphere {
+                    radius 0.04
+                  }
+                }
+              ]
+            }
+            DEF EyesR Transform {
+              translation 0.135 0.08 -0.01
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 1 1 0.498039
+                    roughness 1
+                    metalness 0.1
+                    emissiveColor 1 1 0
+                  }
+                  geometry Sphere {
+                    radius 0.04
+                  }
+                }
+              ]
             }
           ]
         }
