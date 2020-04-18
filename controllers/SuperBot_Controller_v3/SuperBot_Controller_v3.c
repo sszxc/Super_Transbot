@@ -348,7 +348,7 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
       load_target_posture[2] = compass_angle;
       while (!Moveto_CertainPoint(load_target_posture, 0.01))
       {
-        step();//嘻嘻乱了时序 直接在里面循环了
+        step();//时序乱了
       }
       base_reset();
       printf("小心上货！\n");
@@ -361,13 +361,13 @@ void Robot_State_Machine(int *main_state, int *grasp_state)
       load_target_posture[2] = compass_angle;
       while (!Moveto_CertainPoint(load_target_posture, 0.01))
       {
-        step(); //嘻嘻乱了时序 直接在里面循环了
+        step(); //时序乱了
       }
       load_target_posture[2] = (compass_angle > PI) ? compass_angle - PI : compass_angle + PI; //原地自转回来
 
       while (!Moveto_CertainPoint(load_target_posture, 0.01))
       {
-        step(); //嘻嘻乱了时序 直接在里面循环了
+        step(); //时序乱了
       }
       moveFingers(width = 0.0);
       lift(height = 0.020);
